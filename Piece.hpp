@@ -7,7 +7,7 @@ class Piece
 public:
 
     Piece(Square pos, const sf::Texture& texture)
-        : position(pos), sprite(texture)
+        : position(pos), sprite(texture), color(sf::Color::Green)
     {
     }
     
@@ -49,4 +49,5 @@ protected:
     sf::Sprite sprite;
     Square position;
     bool selected=false;
+    sf::Color color;
 };

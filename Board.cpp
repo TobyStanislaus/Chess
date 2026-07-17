@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Board.hpp"
 #include "Pawn.hpp"
-
+#include "Knight.hpp"
 
 
 Board::Board()
@@ -14,6 +14,10 @@ Board::Board()
 
     pieces.push_back(
         std::make_unique<Pawn>(Square{1,1}, texture)
+    );
+
+    pieces.push_back(
+        std::make_unique<Knight>(Square{0,1}, texture)
     );
 }
 

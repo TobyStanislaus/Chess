@@ -69,7 +69,7 @@ void movePiece(Square& clicked, Piece& piece){
             piece.select();
             return;} 
     }
-    
+
     else if (piece.isSelected()&&(isLegalMove(clicked, piece.getLegalMoves()))){
         piece.setPosition(clicked);
     }
@@ -83,10 +83,10 @@ int main()
         sf::VideoMode({800, 800}),
         "Chess"
     );
+
     Board board;
     sf::Texture texture;
     Square clicked;
-    Pawn pawn({0, 1}, texture);
 
     while (window.isOpen())
     {
@@ -113,7 +113,7 @@ int main()
         window.clear(sf::Color::Black);
         
         display_board(window);
-        //pawn.draw(window);
+        
         board.draw(window);
         // draw things here
 

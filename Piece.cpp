@@ -12,7 +12,7 @@ void Piece::draw(sf::RenderWindow& window){
     if (selected)
         pawnShape.setFillColor(sf::Color::Yellow);
     else
-        pawnShape.setFillColor(sf::Color::Green);
+        pawnShape.setFillColor(color);
 
     window.draw(pawnShape);
 }
