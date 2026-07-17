@@ -18,9 +18,6 @@ void Pawn::draw(sf::RenderWindow& window){
     window.draw(pawnShape);
 }
 
-void Pawn::setPosition(Square pos){
-    position = pos;
-}
 
 std::vector<Square> Pawn::getLegalMoves()
 {

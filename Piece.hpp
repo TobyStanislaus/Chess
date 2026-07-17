@@ -40,6 +40,11 @@ public:
     {
         return position;
     }
+
+    void setPosition(Square pos)
+    {
+    position = pos;
+    }
  
 protected:
     sf::Sprite sprite;

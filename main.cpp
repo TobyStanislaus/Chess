@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Board.hpp"
 #include "Pawn.hpp"
-
+#include "Piece.hpp"
 
 
 void display_board(sf::RenderWindow& window){
@@ -50,7 +50,8 @@ Square handle_click(sf::RenderWindow& window){
     return {-1, -1};
 }
 
-bool isLegalMove(Square clicked, std::vector<Square> moves)
+
+bool isLegalMove(Square& clicked, std::vector<Square> moves)
 {
     for (auto move : moves)
     {
@@ -59,6 +60,19 @@ bool isLegalMove(Square clicked, std::vector<Square> moves)
     }
 
     return false;
+}
+
+
+void movePiece(Square& clicked, Piece& piece){
+    if ((clicked.row == piece.getPosition().row)&&(clicked.col == piece.getPosition().col)){
+        if (piece.isSelected()){piece.deselect();} 
+        else{piece.select();}
+        
+    }
+    else if (piece.isSelected()&&(isLegalMove(clicked, piece.getLegalMoves()))){
+        piece.deselect();
+        piece.setPosition(clicked);
+    }
 }
 
 
@@ -80,15 +94,7 @@ int main()
 
         if (clicked.row != -1)
         {
-            if ((clicked.row == pawn.getPosition().row)&&(clicked.col == pawn.getPosition().col)){
-                if (pawn.isSelected()){pawn.deselect();} 
-                else{pawn.select();}
-                
-            }
-            else if (pawn.isSelected()&&(isLegalMove(clicked, pawn.getLegalMoves()))){
-                pawn.deselect();
-                pawn.setPosition(clicked);
-            }
+            movePiece(clicked, pawn);
         }
 
 
