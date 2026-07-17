@@ -10,5 +10,5 @@ public:
     }
 
     void draw(sf::RenderWindow& window) override;
-    
+    void setPosition(Square position);
 };

@@ -1,8 +1,11 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Board.hpp"
 #include "Pawn.hpp"
 
-void display(sf::RenderWindow& window){
+
+
+void display_board(sf::RenderWindow& window){
     for (int row = 0; row < 8; row++)
     {
         for (int col = 0; col < 8; col++)
@@ -25,6 +28,29 @@ void display(sf::RenderWindow& window){
 }
 
 
+Square handle_click(sf::RenderWindow& window){
+    while (auto event = window.pollEvent())
+    {
+            if (event->is<sf::Event::Closed>())
+            window.close();
+
+            if (const auto* mouse = event->getIf<sf::Event::MouseButtonPressed>())
+            {
+                if (mouse->button == sf::Mouse::Button::Left)
+                {
+                    sf::Vector2i pixelPos = mouse->position;
+
+                    return {
+                        pixelPos.y / 100,
+                        pixelPos.x / 100
+                    };
+                }
+            }
+    }
+    return {-1, -1};
+}
+
+
 int main()
 {
     sf::RenderWindow window(
@@ -33,24 +59,27 @@ int main()
     );
     Board board;
     sf::Texture texture;
-
+    Square clicked;
     Pawn pawn({0, 1}, texture);
 
     while (window.isOpen())
     {
-        while (auto event = window.pollEvent())
+
+        clicked = handle_click(window);
+
+        if (clicked.row != -1)
         {
-            if (event->is<sf::Event::Closed>())
-                window.close();
+            pawn.setPosition(clicked);
         }
 
-    window.clear(sf::Color::Black);
-    
-    display(window);
-    pawn.draw(window);
 
-    // draw things here
+        window.clear(sf::Color::Black);
+        
+        display_board(window);
+        pawn.draw(window);
 
-    window.display();
+        // draw things here
+
+        window.display();
     }
 }
