@@ -113,7 +113,6 @@ int main()
         window.clear(sf::Color::Black);
         
         display_board(window);
-        
         board.draw(window);
         // draw things here
 
