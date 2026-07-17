@@ -1,12 +1,12 @@
 #pragma once
-
+#include "Square.hpp"
 
 
 class Board
 {
-    public:
-        Board();
-
-        void display(sf::RenderWindow& window);
+public:
+    Board();
+private:
+    std::array<std::array<Square, 8>, 8> squares;
 
 };
