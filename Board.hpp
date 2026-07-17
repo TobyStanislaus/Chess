@@ -1,12 +1,17 @@
 #pragma once
-#include "Square.hpp"
 
+#include <vector>
+#include <memory>
+#include "Piece.hpp"
 
 class Board
 {
 public:
     Board();
-private:
-    std::array<std::array<Square, 8>, 8> squares;
 
+    void draw(sf::RenderWindow& window);
+    std::vector<std::unique_ptr<Piece>>& getPieces();
+    
+private:
+    std::vector<std::unique_ptr<Piece>> pieces;
 };

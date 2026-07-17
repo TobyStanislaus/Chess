@@ -94,15 +94,17 @@ int main()
 
         if (clicked.row != -1)
         {
-            movePiece(clicked, pawn);
+            for (auto& piece : board.getPieces()){
+                movePiece(clicked, *piece);
+            }
         }
 
 
         window.clear(sf::Color::Black);
         
         display_board(window);
-        pawn.draw(window);
-
+        //pawn.draw(window);
+        board.draw(window);
         // draw things here
 
         window.display();

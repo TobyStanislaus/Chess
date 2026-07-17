@@ -10,5 +10,4 @@ public:
     }
 
     std::vector<Square> getLegalMoves() override;
-    void draw(sf::RenderWindow& window) override;
 };

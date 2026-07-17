@@ -29,8 +29,6 @@ public:
 
     virtual ~Piece() = default;
 
-    virtual void draw(sf::RenderWindow&) = 0;
-
     //virtual std::vector<Square> getLegalMoves() = 0;
 
     virtual std::vector<Square> getLegalMoves() = 0;
@@ -45,7 +43,8 @@ public:
     {
     position = pos;
     }
- 
+
+    void draw(sf::RenderWindow& window);
 protected:
     sf::Sprite sprite;
     Square position;
