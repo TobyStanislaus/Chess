@@ -7,7 +7,7 @@ public:
     Rook(Square pos, const sf::Texture& texture)
         : Piece(pos, texture)
     {
-        color = sf::Color::Red;
+        color = sf::Color(255, 165, 0);
     }
 
     std::vector<Square> getLegalMoves() override;
