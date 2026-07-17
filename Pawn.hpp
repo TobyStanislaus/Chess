@@ -9,6 +9,7 @@ public:
     {
     }
 
+    std::vector<Square> getLegalMoves() override;
     void draw(sf::RenderWindow& window) override;
     void setPosition(Square position);
 };

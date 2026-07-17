@@ -50,6 +50,17 @@ Square handle_click(sf::RenderWindow& window){
     return {-1, -1};
 }
 
+bool isLegalMove(Square clicked, std::vector<Square> moves)
+{
+    for (auto move : moves)
+    {
+        if (move == clicked)
+            return true;
+    }
+
+    return false;
+}
+
 
 int main()
 {
@@ -74,7 +85,7 @@ int main()
                 else{pawn.select();}
                 
             }
-            else if (pawn.isSelected()){
+            else if (pawn.isSelected()&&(isLegalMove(clicked, pawn.getLegalMoves()))){
                 pawn.deselect();
                 pawn.setPosition(clicked);
             }
