@@ -9,7 +9,12 @@ void Pawn::draw(sf::RenderWindow& window){
         position.col * 100.f + 50.f,
         position.row * 100.f + 50.f
     });
-    pawnShape.setFillColor(sf::Color::Green);
+    
+    if (selected)
+        pawnShape.setFillColor(sf::Color::Yellow);
+    else
+        pawnShape.setFillColor(sf::Color::Green);
+
     window.draw(pawnShape);
 }
 

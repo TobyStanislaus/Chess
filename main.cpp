@@ -69,7 +69,15 @@ int main()
 
         if (clicked.row != -1)
         {
-            pawn.setPosition(clicked);
+            if ((clicked.row == pawn.getPosition().row)&&(clicked.col == pawn.getPosition().col)){
+                if (pawn.isSelected()){pawn.deselect();} 
+                else{pawn.select();}
+                
+            }
+            else if (pawn.isSelected()){
+                pawn.deselect();
+                pawn.setPosition(clicked);
+            }
         }
 
 

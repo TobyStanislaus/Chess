@@ -11,6 +11,22 @@ public:
     {
     }
     
+    void select()
+    {
+        selected = true;
+    }
+
+    void deselect()
+    {
+        selected = false;
+    }
+
+    bool isSelected() const
+    {
+        return selected;
+    }
+
+
     virtual ~Piece() = default;
 
     virtual void draw(sf::RenderWindow&) = 0;
@@ -26,4 +42,5 @@ public:
 protected:
     sf::Sprite sprite;
     Square position;
+    bool selected=false;
 };
