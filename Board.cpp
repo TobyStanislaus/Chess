@@ -21,6 +21,20 @@ void Board::draw(sf::RenderWindow& window){
     for (auto&piece : pieces){
         piece->draw(window);
     }
+
+    for (auto& move : potential_moves){
+
+        sf::CircleShape pawnShape(30.f);
+        pawnShape.setOrigin({30.f, 30.f});
+
+        pawnShape.setPosition({
+            move.col * 100.f + 50.f,
+            move.row * 100.f + 50.f
+        });
+
+        pawnShape.setFillColor(sf::Color::Blue);
+        window.draw(pawnShape);
+    }
     
 }
 
@@ -28,3 +42,9 @@ std::vector<std::unique_ptr<Piece>>& Board::getPieces()
 {
     return pieces;
 }
+
+
+void Board::set_potential_moves(const std::vector<Square>& new_moves)
+{
+    potential_moves = new_moves;
+};

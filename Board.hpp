@@ -11,7 +11,8 @@ public:
 
     void draw(sf::RenderWindow& window);
     std::vector<std::unique_ptr<Piece>>& getPieces();
-    
+    void set_potential_moves(const std::vector<Square>& new_moves);
 private:
     std::vector<std::unique_ptr<Piece>> pieces;
+    std::vector<Square> potential_moves;
 };

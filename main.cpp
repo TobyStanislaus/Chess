@@ -65,14 +65,15 @@ bool isLegalMove(Square& clicked, std::vector<Square> moves)
 
 void movePiece(Square& clicked, Piece& piece){
     if ((clicked.row == piece.getPosition().row)&&(clicked.col == piece.getPosition().col)){
-        if (piece.isSelected()){piece.deselect();} 
-        else{piece.select();}
-        
+        if (!piece.isSelected()){
+            piece.select();
+            return;} 
     }
+    
     else if (piece.isSelected()&&(isLegalMove(clicked, piece.getLegalMoves()))){
-        piece.deselect();
         piece.setPosition(clicked);
     }
+    piece.deselect();
 }
 
 
@@ -99,6 +100,15 @@ int main()
             }
         }
 
+        std::vector<Square> none;
+        board.set_potential_moves(none);
+
+        for (auto& piece : board.getPieces())
+        {  
+            if ((*piece).isSelected()){
+                board.set_potential_moves((*piece).getLegalMoves());
+            }
+        }
 
         window.clear(sf::Color::Black);
         
