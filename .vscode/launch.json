@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Asteroids",
+            "name": "Debug Chess",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Asteroids.exe",
+            "program": "${workspaceFolder}/Chess.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -13,7 +13,7 @@
             "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "C:/mingw64/bin/gdb.exe",
-            "preLaunchTask": "Build Asteroids"
+            "preLaunchTask": "Build Chess"
         }
     ]
 }

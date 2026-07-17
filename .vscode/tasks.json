@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build Asteroids",
+            "label": "Build Chess",
             "type": "shell",
             "command": "C:/mingw64/bin/g++.exe",
             "args": [
@@ -11,7 +11,7 @@
                 "-IC:/vcpkg/installed/x64-mingw-dynamic/include",
                 "*.cpp",
                 "-o",
-                "Asteroids.exe",
+                "Chess.exe",
                 "-LC:/vcpkg/installed/x64-mingw-dynamic/lib",
                 "-lsfml-graphics",
                 "-lsfml-window",
