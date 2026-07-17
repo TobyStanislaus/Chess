@@ -9,7 +9,7 @@ int main()
         sf::VideoMode({800, 800}),
         "Chess"
     );
-
+    Board board;
 
     while (window.isOpen())
     {
@@ -18,8 +18,10 @@ int main()
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
-        
+
     window.clear(sf::Color::Black);
+    
+    board.display(window);
 
     // draw things here
 

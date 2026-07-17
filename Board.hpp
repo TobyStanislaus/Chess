@@ -4,8 +4,9 @@
 
 class Board
 {
-    Board();
+    public:
+        Board();
 
-    void display();
+        void display(sf::RenderWindow& window);
 
 };
