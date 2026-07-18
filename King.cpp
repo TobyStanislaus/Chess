@@ -17,3 +17,8 @@ std::vector<Square> King::getDirections()
         {position.row-1, position.col+1},
     };
 }
+
+PieceType King::getType() const
+{
+    return PieceType::King;
+}

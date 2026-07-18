@@ -11,23 +11,23 @@ Board::Board()
 {
     sf::Texture texture;
 
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture));
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture));
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture));
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture));
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture));
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture));
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture));
-    //pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture));
 
 
     pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture));
-    //pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture));
+    pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture));
     pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture));
     pieces.push_back(std::make_unique<Queen>(Square{0,3}, texture));
-    //pieces.push_back(std::make_unique<King>(Square{0,4}, texture));
+    pieces.push_back(std::make_unique<King>(Square{0,4}, texture));
     pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture));
-   // pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture));
+    pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture));
     pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture));
 }
 
@@ -104,4 +104,56 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece)
     }
 
     return moves;
+}
+
+std::vector<Square> Board::getNormalMoves(Piece& piece)
+{
+    std::vector<Square> moves;
+
+    for (Square dir : piece.getDirections())
+    {
+        if (inBounds(dir) && !friendlyPiece(dir))
+            moves.push_back(dir);
+
+        //if (enemyPiece(current, piece))
+        //    break;
+    
+    }
+
+    return moves;
+}
+std::vector<Square> Board::getPawnMoves(Piece& piece)
+{
+    std::vector<Square> moves;
+
+    for (Square dir : piece.getDirections())
+    {
+        if (inBounds(dir) && !friendlyPiece(dir))
+            moves.push_back(dir);
+
+        //if (enemyPiece(current, piece))
+        //    break;
+    
+    }
+
+    return moves;
+}
+
+std::vector<Square> Board::getMoves(Piece& piece)
+{
+    switch (piece.getType())
+    {
+    case PieceType::King:
+    case PieceType::Knight:
+        return getNormalMoves(piece);
+
+    case PieceType::Bishop:
+    case PieceType::Rook:
+    case PieceType::Queen:
+        return getSlidingMoves(piece);
+    
+    case PieceType::Pawn:
+        return getPawnMoves(piece);
+    }
+    return {};
 }

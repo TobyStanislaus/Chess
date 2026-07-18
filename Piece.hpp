@@ -2,6 +2,18 @@
 #include <SFML/Graphics.hpp>
 #include "Square.hpp"
 
+
+enum class PieceType
+{
+    King,
+    Queen,
+    Rook,
+    Bishop,
+    Knight,
+    Pawn
+};
+
+
 class Piece
 {
 public:
@@ -44,6 +56,7 @@ public:
     }
 
     void draw(sf::RenderWindow& window);
+    virtual PieceType getType() const = 0;
 protected:
     sf::Sprite sprite;
     Square position;

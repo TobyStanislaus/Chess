@@ -16,3 +16,8 @@ std::vector<Square> Knight::getDirections()
         {position.row - 1, position.col-2},
     };
 }
+
+PieceType Knight::getType() const
+{
+    return PieceType::Knight;
+}

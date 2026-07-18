@@ -70,7 +70,7 @@ void movePiece(Board& board, Square& clicked, Piece& piece){
             return;} 
     }
 
-    else if (piece.isSelected()&&(isLegalMove(clicked, board.getSlidingMoves(piece)))){
+    else if (piece.isSelected()&&(isLegalMove(clicked, board.getMoves(piece)))){
         piece.setPosition(clicked);
     }
     piece.deselect();
@@ -106,7 +106,7 @@ int main()
         for (auto& piece : board.getPieces())
         {  
             if ((*piece).isSelected()){
-                board.set_potential_moves(board.getSlidingMoves(*piece));
+                board.set_potential_moves(board.getMoves(*piece));
             }
         }
 

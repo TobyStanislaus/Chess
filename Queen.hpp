@@ -11,5 +11,5 @@ public:
     }
 
     std::vector<Square> getDirections() override;
-    
+    PieceType getType() const override;
 };
