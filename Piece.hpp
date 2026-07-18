@@ -31,8 +31,7 @@ public:
 
     //virtual std::vector<Square> getLegalMoves() = 0;
 
-    virtual std::vector<Square> getLegalMoves() = 0;
-
+    virtual std::vector<Square> getDirections() = 0;
 
     Square getPosition() const
     {

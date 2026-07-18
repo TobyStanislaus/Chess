@@ -10,5 +10,5 @@ public:
         color = sf::Color::Cyan;
     }
 
-    std::vector<Square> getLegalMoves() override;
+    std::vector<Square> getDirections() override;
 };

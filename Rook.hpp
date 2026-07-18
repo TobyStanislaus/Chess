@@ -10,5 +10,5 @@ public:
         color = sf::Color(255, 165, 0);
     }
 
-    std::vector<Square> getLegalMoves() override;
+    std::vector<Square> getDirections() override;
 };

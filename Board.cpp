@@ -62,3 +62,45 @@ void Board::set_potential_moves(const std::vector<Square>& new_moves)
 {
     potential_moves = new_moves;
 };
+
+bool Board::inBounds(Square& current){
+    return (current.row>=0 && current.col>=0 && current.row<8 && current.col<8);
+}
+
+
+bool Board::friendlyPiece(Square current){
+    for (auto& piece : pieces){
+        if ((*piece).getPosition() == current){return true;};
+    }
+    return false;
+}
+
+
+std::vector<Square> Board::getSlidingMoves(Piece& piece)
+{
+    std::vector<Square> moves;
+
+    for (Square dir : piece.getDirections())
+    {
+        Square current = piece.getPosition();
+
+        while (true)
+        {
+            current.row += dir.row;
+            current.col += dir.col;
+
+            if (!inBounds(current))
+                break;
+
+            if (friendlyPiece(current))
+                break;
+
+            moves.push_back(current);
+
+            //if (enemyPiece(current, piece))
+            //    break;
+        }
+    }
+
+    return moves;
+}

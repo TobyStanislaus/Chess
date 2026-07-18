@@ -2,7 +2,7 @@
 
 
 
-std::vector<Square> Rook::getLegalMoves()
+std::vector<Square> Rook::getDirections()
 {
     std::vector<Square> legalMoves;
     for (int i=0; i<8;i++){

@@ -2,7 +2,7 @@
 
 
 
-std::vector<Square> Knight::getLegalMoves()
+std::vector<Square> Knight::getDirections()
 {
     return {
         {position.row + 2, position.col+1},

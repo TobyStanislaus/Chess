@@ -2,7 +2,7 @@
 
 
 
-std::vector<Square> Queen::getLegalMoves()
+std::vector<Square> Queen::getDirections()
 {
     std::vector<Square> legalMoves;
 

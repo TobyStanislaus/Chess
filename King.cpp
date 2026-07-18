@@ -2,7 +2,7 @@
 
 
 
-std::vector<Square> King::getLegalMoves()
+std::vector<Square> King::getDirections()
 {
     return {
         {position.row + 1, position.col-1},

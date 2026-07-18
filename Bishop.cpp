@@ -2,7 +2,7 @@
 
 
 
-std::vector<Square> Bishop::getLegalMoves()
+std::vector<Square> Bishop::getDirections()
 {
     std::vector<Square> legalMoves;
 
