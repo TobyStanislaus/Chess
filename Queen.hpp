@@ -11,4 +11,5 @@ public:
     }
 
     std::vector<Square> getDirections() override;
+    
 };

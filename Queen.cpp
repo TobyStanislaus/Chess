@@ -1,7 +1,21 @@
 #include "Queen.hpp"
+std::vector<Square> Queen::getDirections(){
 
+    return{
+        {1,-1},
+        {1,0},
+        {1,1},
 
+        {0,-1},
+        {0,1},
 
+        {-1,-1},
+        {-1,0},
+        {-1,1},
+    };
+}
+
+/*
 std::vector<Square> Queen::getDirections()
 {
     std::vector<Square> legalMoves;
@@ -37,4 +51,4 @@ std::vector<Square> Queen::getDirections()
     
 
     return legalMoves;
-}
+}*/

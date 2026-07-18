@@ -11,23 +11,23 @@ Board::Board()
 {
     sf::Texture texture;
 
-    pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture));
+    //pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture));
 
 
     pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture));
-    pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture));
+    //pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture));
     pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture));
     pieces.push_back(std::make_unique<Queen>(Square{0,3}, texture));
-    pieces.push_back(std::make_unique<King>(Square{0,4}, texture));
+    //pieces.push_back(std::make_unique<King>(Square{0,4}, texture));
     pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture));
-    pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture));
+   // pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture));
     pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture));
 }
 
@@ -51,6 +51,7 @@ void Board::draw(sf::RenderWindow& window){
     }
     
 }
+
 
 std::vector<std::unique_ptr<Piece>>& Board::getPieces()
 {

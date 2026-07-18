@@ -1,7 +1,14 @@
 #include "Bishop.hpp"
 
+std::vector<Square> Bishop::getDirections(){
+    return {{1,1},
+            {-1,-1},
+            {-1,1},
+            {1,-1},
+        };
 
-
+}
+/*
 std::vector<Square> Bishop::getDirections()
 {
     std::vector<Square> legalMoves;
@@ -32,3 +39,4 @@ std::vector<Square> Bishop::getDirections()
 
     return legalMoves;
 }
+*/

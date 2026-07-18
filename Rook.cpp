@@ -1,7 +1,16 @@
 #include "Rook.hpp"
 
+std::vector<Square> Rook::getDirections(){
+    return {
+        {1,0},
+        {0,1},
+        {-1,0},
+        {0,-1},
+    };
+}
 
 
+/*
 std::vector<Square> Rook::getDirections()
 {
     std::vector<Square> legalMoves;
@@ -12,3 +21,4 @@ std::vector<Square> Rook::getDirections()
     
     return legalMoves;
 }
+*/
