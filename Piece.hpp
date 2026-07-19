@@ -18,8 +18,8 @@ class Piece
 {
 public:
 
-    Piece(Square pos, const sf::Texture& texture)
-        : position(pos), sprite(texture), color(sf::Color::Green)
+    Piece(Square pos, const sf::Texture& texture, bool black)
+        : position(pos), sprite(texture), color(sf::Color::Green), black(black)
     {
     }
     
@@ -55,6 +55,11 @@ public:
     position = pos;
     }
 
+    bool getBlack() const
+    {
+        return black;
+    }
+
     void draw(sf::RenderWindow& window);
     virtual PieceType getType() const = 0;
 protected:
@@ -62,4 +67,5 @@ protected:
     Square position;
     bool selected=false;
     sf::Color color;
+    bool black;
 };

@@ -10,25 +10,43 @@
 Board::Board()
 {
     sf::Texture texture;
+    bool black = true;
+    pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture, black));
 
-    pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture));
+    pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture, black));
+    pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture, black));
+    pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture, black));
+    pieces.push_back(std::make_unique<King>(Square{0,3}, texture, black));
+    pieces.push_back(std::make_unique<Queen>(Square{0,4}, texture, black));
+    pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture, black));
+    pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture, black));
+    pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture, black));
 
+    black = false;
+    pieces.push_back(std::make_unique<Pawn>(Square{6,0}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,1}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,2}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,3}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,4}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,5}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,6}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,7}, texture, black));
 
-    pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture));
-    pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture));
-    pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture));
-    pieces.push_back(std::make_unique<Queen>(Square{0,3}, texture));
-    pieces.push_back(std::make_unique<King>(Square{0,4}, texture));
-    pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture));
-    pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture));
-    pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture));
+    pieces.push_back(std::make_unique<Rook>(Square{7,0}, texture, black));
+    pieces.push_back(std::make_unique<Knight>(Square{7,1}, texture, black));
+    pieces.push_back(std::make_unique<Bishop>(Square{7,2}, texture, black));
+    pieces.push_back(std::make_unique<Queen>(Square{7,3}, texture, black));
+    pieces.push_back(std::make_unique<King>(Square{7,4}, texture, black));
+    pieces.push_back(std::make_unique<Bishop>(Square{7,5}, texture, black));
+    pieces.push_back(std::make_unique<Knight>(Square{7,6}, texture, black));
+    pieces.push_back(std::make_unique<Rook>(Square{7,7}, texture, black));
 }
 
 void Board::draw(sf::RenderWindow& window){

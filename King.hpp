@@ -4,8 +4,8 @@
 class King : public Piece
 {
 public:
-    King(Square pos, const sf::Texture& texture)
-        : Piece(pos, texture)
+    King(Square pos, const sf::Texture& texture,bool black)
+        : Piece(pos, texture,black)
     {
         color = sf::Color::Cyan;
     }

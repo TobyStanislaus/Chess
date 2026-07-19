@@ -4,8 +4,8 @@
 class Queen : public Piece
 {
 public:
-    Queen(Square pos, const sf::Texture& texture)
-        : Piece(pos, texture)
+    Queen(Square pos, const sf::Texture& texture,bool black)
+        : Piece(pos, texture, black)
     {
         color = sf::Color::Magenta;
     }

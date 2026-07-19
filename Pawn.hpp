@@ -4,8 +4,8 @@
 class Pawn : public Piece
 {
 public:
-    Pawn(Square pos, const sf::Texture& texture)
-        : Piece(pos, texture)
+    Pawn(Square pos, const sf::Texture& texture,bool black)
+        : Piece(pos, texture,black)
     {
         color = sf::Color::Green;
     }

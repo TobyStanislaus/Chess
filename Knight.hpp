@@ -4,8 +4,8 @@
 class Knight : public Piece
 {
 public:
-    Knight(Square pos, const sf::Texture& texture)
-        : Piece(pos, texture)
+    Knight(Square pos, const sf::Texture& texture,bool black)
+        : Piece(pos, texture,black)
     {
         color = sf::Color::Red;
     }

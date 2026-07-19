@@ -4,8 +4,8 @@
 class Rook : public Piece
 {
 public:
-    Rook(Square pos, const sf::Texture& texture)
-        : Piece(pos, texture)
+    Rook(Square pos, const sf::Texture& texture, bool black)
+        : Piece(pos, texture,black)
     {
         color = sf::Color(255, 165, 0);
     }
