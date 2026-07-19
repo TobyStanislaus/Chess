@@ -46,11 +46,19 @@ Square handle_click(sf::RenderWindow& window){
 }
 
 
-void Game::handleInput(sf::RenderWindow& window){
-    
+void Game::handleInput(sf::RenderWindow& window){  
     Square clicked = handle_click(window);
 
-    board.movePiece(board, clicked);
+    for (auto& piece : board.getPieces()){
+        if (((piece->getPosition() == clicked) && piece->getBlack()==blackTurn)){
+            board.movePiece(board, clicked, blackTurn);
+            break;
+        } else if (piece->isSelected()){
+            bool moved = board.movePiece(board, clicked, blackTurn);
+            if (moved){blackTurn = !blackTurn;}
+            break;
+        }
+    }
 
     std::vector<Square> none;
     board.set_potential_moves(none);

@@ -4,9 +4,6 @@
 #include "Game.hpp"
 
 
-
-
-
 int main()
 {
     sf::RenderWindow window(

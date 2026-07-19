@@ -217,10 +217,12 @@ bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
 }
 
 
-void Board::movePiece(Board& board, Square& clicked)
+bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
 {
     Piece* selected = nullptr;
-    for (auto& piece : board.getPieces()){
+
+    for (auto& piece : board.getPieces())
+    {
         if (piece->isSelected())
         {
             selected = piece.get();
@@ -228,6 +230,7 @@ void Board::movePiece(Board& board, Square& clicked)
         }
     }
 
+    // Moving selected piece
     if (selected && isLegalMove(clicked, board.getMoves(*selected)))
     {
         Piece* otherPiece = board.getPieceAt(clicked);
@@ -239,21 +242,35 @@ void Board::movePiece(Board& board, Square& clicked)
 
         selected->setPosition(clicked);
         selected->deselect();
-    }
-    else if (selected && selected->getPosition() == clicked){selected->deselect();}
-    else{
-        for (auto& piece : board.getPieces())
-            {
-                if (piece->getPosition() == clicked)
-                {
-                    for (auto& p : board.getPieces())
-                    {
-                        p->deselect();
-                    }
 
-                    piece->select();
-                    break;
+        return true; // <-- actual move happened
+    }
+
+    // Clicking selected piece again
+    else if (selected && selected->getPosition() == clicked)
+    {
+        selected->deselect();
+        return false;
+    }
+
+    // Selecting a piece
+    else
+    {
+        for (auto& piece : board.getPieces())
+        {
+            if ((piece->getPosition() == clicked) && piece->getBlack() == blackTurn)
+            {
+                for (auto& p : board.getPieces())
+                {
+                    p->deselect();
                 }
+
+                piece->select();
+
+                return false; // <-- only selected, no move
             }
         }
+    }
+
+    return false;
 }
