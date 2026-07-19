@@ -71,7 +71,6 @@ void movePiece(Board& board, Square& clicked, Piece& piece){
     }
 
     else if (piece.isSelected()&&(isLegalMove(clicked, board.getMoves(piece)))){
-        board.removePieceAt(clicked);
         piece.setPosition(clicked);
     }
     piece.deselect();
@@ -94,12 +93,44 @@ int main()
 
         clicked = handle_click(window);
 
-        if (clicked.row != -1)
-        {
-            for (auto& piece : board.getPieces()){
-                movePiece(board, clicked, *piece);
+        Piece* selected = nullptr;
+
+        for (auto& piece : board.getPieces()){
+            if (piece->isSelected())
+            {
+                selected = piece.get();
+                break;
             }
         }
+
+        if (selected && isLegalMove(clicked, board.getMoves(*selected)))
+        {
+            Piece* otherPiece = board.getPieceAt(clicked);
+
+            if (otherPiece)
+            {
+                board.removePieceAt(clicked);
+            }
+
+            selected->setPosition(clicked);
+            selected->deselect();
+        }
+        else if (selected && selected->getPosition() == clicked){selected->deselect();}
+        else{
+            for (auto& piece : board.getPieces())
+                {
+                    if (piece->getPosition() == clicked)
+                    {
+                        for (auto& p : board.getPieces())
+                        {
+                            p->deselect();
+                        }
+
+                        piece->select();
+                        break;
+                    }
+                }
+            }
 
         std::vector<Square> none;
         board.set_potential_moves(none);
