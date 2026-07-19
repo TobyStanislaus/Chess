@@ -87,11 +87,15 @@ bool Board::inBounds(Square& current){
 }
 
 
-bool Board::friendlyPiece(Square current){
-    for (auto& piece : pieces){
-        if ((*piece).getPosition() == current){return true;};
+Piece* Board::getPieceAt(Square current)
+{
+    for (auto& piece : pieces)
+    {
+        if (piece->getPosition() == current)
+            return piece.get();
     }
-    return false;
+
+    return nullptr;
 }
 
 
@@ -111,46 +115,56 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece)
             if (!inBounds(current))
                 break;
 
-            if (friendlyPiece(current))
+            Piece* otherPiece = getPieceAt(current);
+
+            if (otherPiece == nullptr){
+                moves.push_back(current);
+            } else if (otherPiece->getBlack() == piece.getBlack())
                 break;
-
-            moves.push_back(current);
-
-            //if (enemyPiece(current, piece))
-            //    break;
+            else{
+                moves.push_back(current);
+                break;
+            }
         }
     }
 
     return moves;
 }
 
+
 std::vector<Square> Board::getNormalMoves(Piece& piece)
 {
     std::vector<Square> moves;
 
     for (Square dir : piece.getDirections())
-    {
-        if (inBounds(dir) && !friendlyPiece(dir))
-            moves.push_back(dir);
+    {   
+        Piece* otherPiece = getPieceAt(dir);
 
-        //if (enemyPiece(current, piece))
-        //    break;
-    
+        if (!inBounds(dir)){continue;}
+        else if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
+        {
+            moves.push_back(dir);
+        }
+        
     }
 
     return moves;
 }
+
+
 std::vector<Square> Board::getPawnMoves(Piece& piece)
 {
     std::vector<Square> moves;
 
     for (Square dir : piece.getDirections())
     {
-        if (inBounds(dir) && !friendlyPiece(dir))
-            moves.push_back(dir);
+        Piece* otherPiece = getPieceAt(dir);
 
-        //if (enemyPiece(current, piece))
-        //    break;
+        if (!inBounds(dir)){continue;}
+        if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
+        {
+            moves.push_back(dir);
+        }
     
     }
 

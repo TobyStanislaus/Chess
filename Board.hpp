@@ -19,7 +19,7 @@ public:
     std::vector<Square> getMoves(Piece& piece);
 
     bool inBounds(Square& current);
-    bool friendlyPiece(Square current);
+    Piece* getPieceAt(Square current);
     
 private:
     std::vector<std::unique_ptr<Piece>> pieces;
