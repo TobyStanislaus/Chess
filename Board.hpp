@@ -21,6 +21,9 @@ public:
     bool inBounds(Square& current);
     Piece* getPieceAt(Square current);
     void removePieceAt(Square square);
+
+    bool isLegalMove(Square& clicked, std::vector<Square> moves);
+    void movePiece(Board& board, Square& clicked);
     
 private:
     std::vector<std::unique_ptr<Piece>> pieces;

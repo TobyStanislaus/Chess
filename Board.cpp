@@ -203,3 +203,57 @@ void Board::removePieceAt(Square square)
             }),
         pieces.end());
 }
+
+
+bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
+{
+    for (auto move : moves)
+    {
+        if (move == clicked)
+            return true;
+    }
+
+    return false;
+}
+
+
+void Board::movePiece(Board& board, Square& clicked)
+{
+    Piece* selected = nullptr;
+    for (auto& piece : board.getPieces()){
+        if (piece->isSelected())
+        {
+            selected = piece.get();
+            break;
+        }
+    }
+
+    if (selected && isLegalMove(clicked, board.getMoves(*selected)))
+    {
+        Piece* otherPiece = board.getPieceAt(clicked);
+
+        if (otherPiece)
+        {
+            board.removePieceAt(clicked);
+        }
+
+        selected->setPosition(clicked);
+        selected->deselect();
+    }
+    else if (selected && selected->getPosition() == clicked){selected->deselect();}
+    else{
+        for (auto& piece : board.getPieces())
+            {
+                if (piece->getPosition() == clicked)
+                {
+                    for (auto& p : board.getPieces())
+                    {
+                        p->deselect();
+                    }
+
+                    piece->select();
+                    break;
+                }
+            }
+        }
+}
