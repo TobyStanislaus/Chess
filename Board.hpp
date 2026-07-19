@@ -20,6 +20,7 @@ public:
 
     bool inBounds(Square& current);
     Piece* getPieceAt(Square current);
+    void removePieceAt(Square square);
     
 private:
     std::vector<std::unique_ptr<Piece>> pieces;

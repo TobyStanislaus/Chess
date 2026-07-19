@@ -189,3 +189,17 @@ std::vector<Square> Board::getMoves(Piece& piece)
     }
     return {};
 }
+
+
+void Board::removePieceAt(Square square)
+{
+    pieces.erase(
+        std::remove_if(
+            pieces.begin(),
+            pieces.end(),
+            [&](const std::unique_ptr<Piece>& piece)
+            {
+                return piece->getPosition() == square;
+            }),
+        pieces.end());
+}

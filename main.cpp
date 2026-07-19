@@ -71,6 +71,7 @@ void movePiece(Board& board, Square& clicked, Piece& piece){
     }
 
     else if (piece.isSelected()&&(isLegalMove(clicked, board.getMoves(piece)))){
+        board.removePieceAt(clicked);
         piece.setPosition(clicked);
     }
     piece.deselect();
