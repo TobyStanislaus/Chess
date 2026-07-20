@@ -7,7 +7,8 @@ public:
     Pawn(Square pos, const sf::Texture& texture,bool black)
         : Piece(pos, texture,black)
     {
-        color = sf::Color::Green;
+        setSprite(PieceType::Pawn);
+        //color = sf::Color::Green;
     }
 
     std::vector<Square> getDirections() override;

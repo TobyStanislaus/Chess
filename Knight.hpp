@@ -7,7 +7,8 @@ public:
     Knight(Square pos, const sf::Texture& texture,bool black)
         : Piece(pos, texture,black)
     {
-        color = sf::Color::Red;
+        setSprite(PieceType::Knight);
+       // color = sf::Color::Red;
     }
 
     std::vector<Square> getDirections() override;

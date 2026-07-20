@@ -60,6 +60,8 @@ public:
 
     void draw(sf::RenderWindow& window);
     virtual PieceType getType() const = 0;
+
+    void setSprite(PieceType type);
 protected:
     sf::Sprite sprite;
     Square position;

@@ -7,7 +7,8 @@ public:
     Bishop(Square pos, const sf::Texture& texture,bool black)
         : Piece(pos, texture,black)
     {
-        color = sf::Color::Black;
+        setSprite(PieceType::Bishop);
+        //color = sf::Color::Black;
     }
 
     std::vector<Square> getDirections() override;

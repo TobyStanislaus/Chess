@@ -6,10 +6,15 @@
 #include "Rook.hpp"
 #include "Bishop.hpp"
 #include "Queen.hpp"
-
+#include <iostream>
 Board::Board()
 {
-    sf::Texture texture;
+    if (!texture.loadFromFile("assets/Chess.png"))
+    {
+        std::cout << "Texture failed\n";
+    }
+
+
     bool black = true;
     pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture, black));
     pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture, black));

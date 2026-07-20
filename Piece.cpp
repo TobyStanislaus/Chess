@@ -1,18 +1,60 @@
 #include "Piece.hpp"
+#include <iostream>
 
 void Piece::draw(sf::RenderWindow& window){
-    sf::CircleShape pawnShape(30.f);
-    pawnShape.setOrigin({30.f, 30.f});
 
-    pawnShape.setPosition({
-        position.col * 100.f + 50.f,
-        position.row * 100.f + 50.f
+    sprite.setPosition({
+        position.col * 100.f,
+        position.row * 100.f
     });
 
-    if (selected)
-        pawnShape.setFillColor(sf::Color::Yellow);
-    else
-        pawnShape.setFillColor(color);
+    window.draw(sprite);
+}
 
-    window.draw(pawnShape);
+
+void Piece::setSprite(PieceType type)
+{
+    int size = 150;
+
+    int column = 0;
+    int row = black ? 0 : 1;
+
+    switch(type)
+    {
+        case PieceType::Bishop:
+            column = 0;
+            break;
+
+        case PieceType::King:
+            column = 1;
+            break;
+
+        case PieceType::Knight:
+            column = 2;
+            break;
+
+        case PieceType::Pawn:
+            column = 3;
+            break;
+
+        case PieceType::Queen:
+            column = 4;
+            break;
+
+        case PieceType::Rook:
+            column = 5;
+            break;
+    }
+
+    sprite.setTextureRect(
+        sf::IntRect(
+            {column * size, row * size},
+            {size, size}
+        )
+    );
+
+    sprite.setScale({
+    100.f / 150.f,
+    100.f / 150.f
+    });
 }

@@ -7,7 +7,8 @@ public:
     Rook(Square pos, const sf::Texture& texture, bool black)
         : Piece(pos, texture,black)
     {
-        color = sf::Color(255, 165, 0);
+        setSprite(PieceType::Rook);
+        //color = sf::Color(255, 165, 0);
     }
 
     std::vector<Square> getDirections() override;

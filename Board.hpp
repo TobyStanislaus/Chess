@@ -26,6 +26,7 @@ public:
     bool movePiece(Board& board, Square& clicked, bool blackTurn);
     
 private:
+    sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;
     std::vector<Square> potential_moves;
 };
