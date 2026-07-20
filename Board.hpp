@@ -28,6 +28,8 @@ public:
     bool testMoveForCheck(Piece& piece, Square& dir);
     bool checkForCheck(bool isBlack);
 
+    void decideWhetherToAddMove(Piece& piece, Square& newPos, std::vector<Square>& moves, bool careAboutCheck);
+
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;

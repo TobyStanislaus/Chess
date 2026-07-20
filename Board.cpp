@@ -103,6 +103,17 @@ Piece* Board::getPieceAt(Square newPos)
 }
 
 
+void Board::decideWhetherToAddMove(Piece& piece, Square& newPos, std::vector<Square>& moves, bool careAboutCheck){
+    if (careAboutCheck){
+        if (!testMoveForCheck(piece, newPos)){
+            moves.push_back(newPos);
+        }
+    }else{
+        moves.push_back(newPos);
+    }
+}
+
+
 std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
@@ -121,27 +132,13 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 
             Piece* otherPiece = getPieceAt(newPos);
 
-            if (otherPiece == nullptr){ 
-                if (careAboutCheck){
-                    if (!testMoveForCheck(piece, newPos)){
-                        moves.push_back(newPos);
-                    }
-                }else{
-                    moves.push_back(newPos);
-                }
+            if (otherPiece == nullptr){ //No piece
+                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
                 
-            } else if (otherPiece->getBlack() == piece.getBlack())
+            } else if (otherPiece->getBlack() == piece.getBlack()) // piece on same team
                 break;
-            else{
-
-                if (careAboutCheck){
-                    if (!testMoveForCheck(piece, newPos)){
-                        moves.push_back(newPos);
-                    }
-                }else{
-                    moves.push_back(newPos);
-                }
-                
+            else{ // piece on other team
+                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
                 break;
             }
         }
@@ -167,13 +164,7 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
                     moves.push_back(newPos);
                 }
             } else{
-                if (careAboutCheck){
-                    if (!testMoveForCheck(piece, newPos)){
-                        moves.push_back(newPos);
-                    }
-                }else{
-                    moves.push_back(newPos);
-                }
+                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
             }
             
         }
@@ -200,18 +191,11 @@ std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
                     moves.push_back(newPos);
                 }
             } else{
-                if (careAboutCheck){
-                    if (!testMoveForCheck(piece, newPos)){
-                        moves.push_back(newPos);
-                    }
-                }else{
-                    moves.push_back(newPos);
-                }
+                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
                 
             }
         }
     }
-
     return moves;
 }
 
