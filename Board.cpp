@@ -123,13 +123,25 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 
             if (otherPiece == nullptr){ 
                 if (careAboutCheck){
-                    std::cout<< testMoveForCheck(piece, newPos)<<std::endl;
-                }          
-                moves.push_back(newPos);
+                    if (!testMoveForCheck(piece, newPos)){
+                        moves.push_back(newPos);
+                    }
+                }else{
+                    moves.push_back(newPos);
+                }
+                
             } else if (otherPiece->getBlack() == piece.getBlack())
                 break;
             else{
-                moves.push_back(newPos);
+
+                if (careAboutCheck){
+                    if (!testMoveForCheck(piece, newPos)){
+                        moves.push_back(newPos);
+                    }
+                }else{
+                    moves.push_back(newPos);
+                }
+                
                 break;
             }
         }
@@ -151,9 +163,19 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
         else if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
         {
             if (otherPiece == nullptr && careAboutCheck){
-                std::cout<< testMoveForCheck(piece, newPos)<<std::endl;
-            } 
-            moves.push_back(newPos);
+                if (!testMoveForCheck(piece, newPos)){
+                    moves.push_back(newPos);
+                }
+            } else{
+                if (careAboutCheck){
+                    if (!testMoveForCheck(piece, newPos)){
+                        moves.push_back(newPos);
+                    }
+                }else{
+                    moves.push_back(newPos);
+                }
+            }
+            
         }
         
     }
@@ -174,9 +196,19 @@ std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
         if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
         {
             if (otherPiece == nullptr && careAboutCheck){
-                std::cout<< "Hi "<<testMoveForCheck(piece, newPos)<<std::endl;
-            } 
-            moves.push_back(newPos);
+                if (!testMoveForCheck(piece, newPos)){
+                    moves.push_back(newPos);
+                }
+            } else{
+                if (careAboutCheck){
+                    if (!testMoveForCheck(piece, newPos)){
+                        moves.push_back(newPos);
+                    }
+                }else{
+                    moves.push_back(newPos);
+                }
+                
+            }
         }
     }
 
