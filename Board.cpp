@@ -158,17 +158,15 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 
         if (!inBounds(newPos)){continue;}
         else if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
-        {
-            if (otherPiece == nullptr && careAboutCheck){
+        { 
+            if (otherPiece == nullptr && careAboutCheck){ // nothing there and care about check
                 if (!testMoveForCheck(piece, newPos)){
                     moves.push_back(newPos);
                 }
-            } else{
+            } else { // different team or do not care about check
                 decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
             }
-            
         }
-        
     }
 
     return moves;
@@ -220,17 +218,19 @@ std::vector<Square> Board::getMoves(Piece& piece, bool careAboutCheck)
 }
 
 
-void Board::removePieceAt(Square square)
+std::unique_ptr<Piece> Board::removePieceAt(Square square)
 {
-    pieces.erase(
-        std::remove_if(
-            pieces.begin(),
-            pieces.end(),
-            [&](const std::unique_ptr<Piece>& piece)
-            {
-                return piece->getPosition() == square;
-            }),
-        pieces.end());
+    for (auto it = pieces.begin(); it != pieces.end(); ++it)
+    {
+        if ((*it)->getPosition() == square)
+        {
+            std::unique_ptr<Piece> removed = std::move(*it);
+            pieces.erase(it);
+            return removed;
+        }
+    }
+
+    return nullptr;
 }
 
 
@@ -308,10 +308,14 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
 bool Board::testMoveForCheck(Piece& piece, Square& newPos){
     Square originalPosition = piece.getPosition();
 
+    std::unique_ptr<Piece> removed_piece = removePieceAt(newPos);
     piece.setPosition(newPos);
+    
     bool result = checkForCheck(piece.getBlack());
 
+    if (removed_piece){pieces.push_back(std::move(removed_piece));}   
     piece.setPosition(originalPosition);
+
     return (result);
 } 
 
