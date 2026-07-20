@@ -14,7 +14,6 @@ Board::Board()
         std::cout << "Texture failed\n";
     }
 
-
     bool black = true;
     pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture, black));
     pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture, black));
@@ -87,16 +86,16 @@ void Board::set_potential_moves(const std::vector<Square>& new_moves)
     potential_moves = new_moves;
 };
 
-bool Board::inBounds(Square& current){
-    return (current.row>=0 && current.col>=0 && current.row<8 && current.col<8);
+bool Board::inBounds(Square& newPos){
+    return (newPos.row>=0 && newPos.col>=0 && newPos.row<8 && newPos.col<8);
 }
 
 
-Piece* Board::getPieceAt(Square current)
+Piece* Board::getPieceAt(Square newPos)
 {
     for (auto& piece : pieces)
     {
-        if (piece->getPosition() == current)
+        if (piece->getPosition() == newPos)
             return piece.get();
     }
 
@@ -104,30 +103,33 @@ Piece* Board::getPieceAt(Square current)
 }
 
 
-std::vector<Square> Board::getSlidingMoves(Piece& piece)
+std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
 
     for (Square dir : piece.getDirections())
     {
-        Square current = piece.getPosition();
+        Square newPos = piece.getPosition();
 
         while (true)
         {
-            current.row += dir.row;
-            current.col += dir.col;
+            newPos.row += dir.row;
+            newPos.col += dir.col;
 
-            if (!inBounds(current))
+            if (!inBounds(newPos))
                 break;
 
-            Piece* otherPiece = getPieceAt(current);
+            Piece* otherPiece = getPieceAt(newPos);
 
-            if (otherPiece == nullptr){
-                moves.push_back(current);
+            if (otherPiece == nullptr){ 
+                if (careAboutCheck){
+                    std::cout<< testMoveForCheck(piece, newPos)<<std::endl;
+                }          
+                moves.push_back(newPos);
             } else if (otherPiece->getBlack() == piece.getBlack())
                 break;
             else{
-                moves.push_back(current);
+                moves.push_back(newPos);
                 break;
             }
         }
@@ -137,18 +139,21 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece)
 }
 
 
-std::vector<Square> Board::getNormalMoves(Piece& piece)
+std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
 
-    for (Square dir : piece.getDirections())
+    for (Square newPos : piece.getDirections())
     {   
-        Piece* otherPiece = getPieceAt(dir);
+        Piece* otherPiece = getPieceAt(newPos);
 
-        if (!inBounds(dir)){continue;}
+        if (!inBounds(newPos)){continue;}
         else if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
         {
-            moves.push_back(dir);
+            if (otherPiece == nullptr && careAboutCheck){
+                std::cout<< testMoveForCheck(piece, newPos)<<std::endl;
+            } 
+            moves.push_back(newPos);
         }
         
     }
@@ -157,40 +162,43 @@ std::vector<Square> Board::getNormalMoves(Piece& piece)
 }
 
 
-std::vector<Square> Board::getPawnMoves(Piece& piece)
+std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
 
-    for (Square dir : piece.getDirections())
+    for (Square newPos : piece.getDirections())
     {
-        Piece* otherPiece = getPieceAt(dir);
+        Piece* otherPiece = getPieceAt(newPos);
 
-        if (!inBounds(dir)){continue;}
+        if (!inBounds(newPos)){continue;}
         if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
         {
-            moves.push_back(dir);
+            if (otherPiece == nullptr && careAboutCheck){
+                std::cout<< "Hi "<<testMoveForCheck(piece, newPos)<<std::endl;
+            } 
+            moves.push_back(newPos);
         }
-    
     }
 
     return moves;
 }
 
-std::vector<Square> Board::getMoves(Piece& piece)
+
+std::vector<Square> Board::getMoves(Piece& piece, bool careAboutCheck)
 {
     switch (piece.getType())
     {
     case PieceType::King:
     case PieceType::Knight:
-        return getNormalMoves(piece);
+        return getNormalMoves(piece,careAboutCheck);
 
     case PieceType::Bishop:
     case PieceType::Rook:
     case PieceType::Queen:
-        return getSlidingMoves(piece);
+        return getSlidingMoves(piece,careAboutCheck);
     
     case PieceType::Pawn:
-        return getPawnMoves(piece);
+        return getPawnMoves(piece,careAboutCheck);
     }
     return {};
 }
@@ -236,7 +244,7 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
     }
 
     // Moving selected piece
-    if (selected && isLegalMove(clicked, board.getMoves(*selected)))
+    if (selected && isLegalMove(clicked, getMoves(*selected, true)))
     {
         Piece* otherPiece = board.getPieceAt(clicked);
 
@@ -277,5 +285,48 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
         }
     }
 
+    return false;
+}
+
+
+bool Board::testMoveForCheck(Piece& piece, Square& newPos){
+    Square originalPosition = piece.getPosition();
+
+    piece.setPosition(newPos);
+    bool result = checkForCheck(piece.getBlack());
+
+    piece.setPosition(originalPosition);
+    return (result);
+} 
+
+
+bool Board::checkForCheck(bool isBlack)
+{
+    Square kingPosition;
+
+    // Find the king
+    for (auto& piece : pieces)
+    {
+        if (piece->getType()==PieceType::King && piece->getBlack() == isBlack)
+        {
+            kingPosition = piece->getPosition();
+            break;
+        }
+    }
+
+    // Check if any enemy piece attacks it
+    for (auto& enemyPiece : pieces)
+    {
+        if (enemyPiece->getBlack() != isBlack)
+        {
+            std::vector<Square> moves = getMoves(*enemyPiece, false);
+
+            for (Square move : moves)
+            {
+                if (move == kingPosition)
+                    return true;
+            }
+        }
+    }
     return false;
 }

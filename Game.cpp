@@ -66,7 +66,7 @@ void Game::handleInput(sf::RenderWindow& window){
     for (auto& piece : board.getPieces())
     {  
         if ((*piece).isSelected()){
-            board.set_potential_moves(board.getMoves(*piece));
+            board.set_potential_moves(board.getMoves(*piece, true));
         }
     }
 }
