@@ -14,6 +14,11 @@ Board::Board()
         std::cout << "Texture failed\n";
     }
 
+    if (!font.openFromFile("assets/arial.TTF"))
+    {
+        std::cout << "Font failed\n";
+    }
+
     bool black = true;
     pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture, black));
     pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture, black));
@@ -27,8 +32,10 @@ Board::Board()
     pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture, black));
     pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture, black));
     pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture, black));
-    pieces.push_back(std::make_unique<King>(Square{0,3}, texture, black));
-    pieces.push_back(std::make_unique<Queen>(Square{0,4}, texture, black));
+
+    pieces.push_back(std::make_unique<Queen>(Square{0,3}, texture, black));
+    pieces.push_back(std::make_unique<King>(Square{0,4}, texture, black));
+
     pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture, black));
     pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture, black));
     pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture, black));
@@ -72,6 +79,36 @@ void Board::draw(sf::RenderWindow& window){
         window.draw(pawnShape);
     }
     
+    if (gameOver)
+    {
+        // Dark translucent background
+        sf::RectangleShape overlay({800.f, 800.f});
+        overlay.setFillColor(sf::Color(0, 0, 0, 150));
+
+        window.draw(overlay);
+
+        // White box
+        sf::RectangleShape box({500.f, 150.f});
+        box.setOrigin({250.f, 75.f});
+        box.setPosition({400.f, 400.f});
+        box.setFillColor(sf::Color(240, 240, 240, 220));
+
+        window.draw(box);
+
+        // Text
+        sf::Text text(font, gameOverMessage, 40);
+        text.setFillColor(sf::Color::Black);
+
+        auto bounds = text.getLocalBounds();
+        text.setOrigin({
+            bounds.position.x + bounds.size.x / 2.f,
+            bounds.position.y + bounds.size.y / 2.f
+        });
+
+        text.setPosition({400.f, 400.f});
+
+        window.draw(text);
+    }
 }
 
 
@@ -259,6 +296,7 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
         }
     }
 
+    
     // Moving selected piece
     if (selected && isLegalMove(clicked, getMoves(*selected, true)))
     {
@@ -272,6 +310,7 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
         selected->setPosition(clicked);
         selected->deselect();
 
+        handleLoss(blackTurn);
         return true; // <-- actual move happened
     }
 
@@ -279,6 +318,8 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
     else if (selected && selected->getPosition() == clicked)
     {
         selected->deselect();
+
+        handleLoss(blackTurn);
         return false;
     }
 
@@ -296,6 +337,7 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
 
                 piece->select();
 
+                handleLoss(blackTurn);
                 return false; // <-- only selected, no move
             }
         }
@@ -349,4 +391,28 @@ bool Board::checkForCheck(bool isBlack)
         }
     }
     return false;
+}
+
+
+bool Board::areUCheckMated(bool blackTurn)
+{
+    for (auto& piece : getPieces()){
+        if (piece->getBlack() != blackTurn && getMoves(*piece, true).size()>0){
+            return false;
+        }
+    }
+    return true;
+}
+
+void Board::handleLoss(bool blackTurn){
+        // check checkmate 
+    if (areUCheckMated(blackTurn)){
+
+        gameOver = true;
+
+        if (blackTurn)
+            gameOverMessage = "Black has won!";
+        else
+            gameOverMessage = "White has won!";
+    }
 }

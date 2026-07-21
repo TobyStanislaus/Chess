@@ -30,8 +30,16 @@ public:
 
     void decideWhetherToAddMove(Piece& piece, Square& newPos, std::vector<Square>& moves, bool careAboutCheck);
 
+    bool areUCheckMated(bool blackTurn);
+    void handleLoss(bool blackTurn);
+
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;
     std::vector<Square> potential_moves;
+
+    bool gameOver = false;
+    std::string gameOverMessage;
+
+    sf::Font font;
 };
