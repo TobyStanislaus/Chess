@@ -2,19 +2,22 @@
 
 
 
+
 std::vector<Square> Pawn::getDirections()
 {
-    if (getBlack())
-    {
-    return {{position.row + 1, position.col}};
-    }  else{
-        return {{position.row - 1, position.col}};
-    }
+    int direction;
+    if (getBlack()){direction = 1;}  
+    else{direction = -1;}   
 
+    if (firstMove){
+        return {{position.row + direction, position.col},
+                {position.row + 2*direction, position.col},
+                };}
+
+    return {{position.row + direction, position.col}};
 }
 
-
-PieceType Pawn::getType() const
+PieceType Pawn::getType() const 
 {
     return PieceType::Pawn;
 }

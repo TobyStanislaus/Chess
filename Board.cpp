@@ -311,6 +311,11 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
         selected->deselect();
 
         handleLoss(blackTurn);
+
+        if (((*selected).getType() == PieceType::Pawn)){
+            (*selected).setFirstMove();
+        }   
+        
         return true; // <-- actual move happened
     }
 
@@ -403,6 +408,7 @@ bool Board::areUCheckMated(bool blackTurn)
     }
     return true;
 }
+
 
 void Board::handleLoss(bool blackTurn){
         // check checkmate 

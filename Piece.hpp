@@ -19,7 +19,7 @@ class Piece
 public:
 
     Piece(Square pos, const sf::Texture& texture, bool black)
-        : position(pos), sprite(texture), color(sf::Color::Green), black(black)
+        : position(pos), sprite(texture), color(sf::Color::Green), black(black), firstMove(true)
     {
     }
     
@@ -43,6 +43,12 @@ public:
 
     virtual std::vector<Square> getDirections() = 0;
 
+    void setFirstMove(){
+        if (firstMove){
+            firstMove = false;
+        }
+    }
+       
     Square getPosition() const
     {
         return position;
@@ -68,4 +74,5 @@ protected:
     bool selected=false;
     sf::Color color;
     bool black;
+    bool firstMove;
 };
