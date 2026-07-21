@@ -60,7 +60,7 @@ Board::Board()
     pieces.push_back(std::make_unique<Rook>(Square{7,7}, texture, black));
 }
 
-void Board::draw(sf::RenderWindow& window){
+void Board::draw(sf::RenderWindow& window, bool blackTurn){
     for (auto&piece : pieces){
         piece->draw(window);
     }
@@ -108,6 +108,42 @@ void Board::draw(sf::RenderWindow& window){
         text.setPosition({400.f, 400.f});
 
         window.draw(text);
+    }
+
+    else if (waitingForPromotion)
+    {
+        // Dim the board
+    sf::RectangleShape dim({800.f, 800.f});
+    dim.setFillColor(sf::Color(0, 0, 0, 150));
+    window.draw(dim);
+
+
+    // Popup box
+    sf::RectangleShape box({600.f, 200.f});
+    box.setPosition({100.f, 300.f});
+    box.setFillColor(sf::Color(230, 230, 230));
+
+    window.draw(box);
+
+
+    // Title
+    sf::Text title(font, "Promotion", 100);
+    title.setFillColor(sf::Color::Black);
+    title.setPosition({150.f, 300.f});
+
+    window.draw(title);
+
+    // Draw the pieces
+    Queen queen({4, 2}, texture, !blackTurn);
+    Rook rook({4, 3}, texture, !blackTurn);
+    Bishop bishop({4, 4}, texture, !blackTurn);
+    Knight knight({4, 5}, texture, !blackTurn);
+
+    // Better: make a draw version that accepts position
+    queen.draw(window);
+    rook.draw(window);
+    bishop.draw(window);
+    knight.draw(window);
     }
 }
 
@@ -227,6 +263,7 @@ void Board::checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::
     }
 }
 
+
 std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
@@ -312,7 +349,8 @@ bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
 
 
 bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
-{
+{       
+
     Piece* selected = nullptr;
 
     for (auto& piece : board.getPieces())
@@ -342,8 +380,10 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
 
         if (((*selected).getType() == PieceType::Pawn)){
             (*selected).setFirstMove();
+            if (selected != nullptr){detectIfPromotion(*selected);}
         }   
 
+        
         return true; // <-- actual move happened
     }
 
@@ -450,3 +490,100 @@ void Board::handleLoss(bool blackTurn){
             gameOverMessage = "White has won!";
     }
 }
+
+
+void Board::detectIfPromotion(Piece& piece){
+    if (piece.getType() == PieceType::Pawn)
+{
+    if ((!piece.getBlack() && piece.getPosition().row == 0) ||
+        ( piece.getBlack() && piece.getPosition().row == 7))
+    {
+        waitingForPromotion = true;
+        pawnToPromote = &piece;
+    }
+}
+}
+
+
+void Board::handlePromotionClick(Square clicked)
+{       
+
+    if (!waitingForPromotion)
+        return;
+
+
+    // Queen button
+    if (clicked == Square{4, 2})
+    {
+        finishPromotion(PieceType::Queen);
+    }
+
+
+    // Rook button
+    else if (clicked == Square{4, 3})
+    {
+        finishPromotion(PieceType::Rook);
+    }
+
+
+    // Bishop button
+    else if (clicked == Square{4, 4})
+    {
+        finishPromotion(PieceType::Bishop);
+    }
+
+
+    // Knight button
+    else if (clicked == Square{4, 2})
+    {
+        finishPromotion(PieceType::Knight);
+    }
+}
+
+
+void Board::finishPromotion(PieceType type)
+{
+    Square pos = pawnToPromote->getPosition();
+    bool black = pawnToPromote->getBlack();
+
+    removePieceAt(pos);
+
+    addPiece(type, pos, black);
+
+    waitingForPromotion = false;
+    pawnToPromote = nullptr;
+}
+
+void Board::addPiece(PieceType type, Square pos, bool black){
+
+
+    removePieceAt(pos);
+
+    switch (type)
+    {
+    case PieceType::Queen:
+        pieces.push_back(std::make_unique<Queen>(pos, texture, black));
+        break;
+
+    case PieceType::Rook:
+        pieces.push_back(std::make_unique<Rook>(pos, texture, black));
+        break;
+
+    case PieceType::Bishop:
+        pieces.push_back(std::make_unique<Bishop>(pos, texture, black));
+        break;
+
+    case PieceType::Knight:
+        pieces.push_back(std::make_unique<Knight>(pos, texture, black));
+        break;
+
+    case PieceType::Pawn:
+        pieces.push_back(std::make_unique<Pawn>(pos, texture, black));
+        break;
+
+    case PieceType::King:
+        pieces.push_back(std::make_unique<King>(pos, texture, black));
+        break;
+    }
+}
+

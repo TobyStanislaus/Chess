@@ -49,6 +49,11 @@ Square handle_click(sf::RenderWindow& window){
 void Game::handleInput(sf::RenderWindow& window){  
     Square clicked = handle_click(window);
 
+    if (board.isWaitingToPromote())
+    {
+        board.handlePromotionClick(clicked);
+    }
+
     for (auto& piece : board.getPieces()){
         if (((piece->getPosition() == clicked) && piece->getBlack()==blackTurn)){
             board.movePiece(board, clicked, blackTurn);
@@ -74,5 +79,5 @@ void Game::handleInput(sf::RenderWindow& window){
 
 void Game::draw(sf::RenderWindow& window){
     display_board(window);
-    board.draw(window);
+    board.draw(window, blackTurn);
 }

@@ -9,7 +9,7 @@ class Board
 public:
     Board();
 
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, bool blackTurn);
     std::vector<std::unique_ptr<Piece>>& getPieces();
     void set_potential_moves(const std::vector<Square>& new_moves);
 
@@ -34,6 +34,17 @@ public:
     void handleLoss(bool blackTurn);
 
     void checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Square>& moves);
+
+
+    void detectIfPromotion(Piece& piece);
+    void handlePromotionClick(Square clicked);
+    void finishPromotion(PieceType type);
+    void addPiece(PieceType type, Square pos, bool black);
+    
+    bool isWaitingToPromote(){
+        return waitingForPromotion;
+    }
+
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;
@@ -43,4 +54,7 @@ private:
     std::string gameOverMessage;
 
     sf::Font font;
+
+    bool waitingForPromotion = false;
+    Piece* pawnToPromote = nullptr;
 };
