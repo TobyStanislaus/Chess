@@ -113,37 +113,37 @@ void Board::draw(sf::RenderWindow& window, bool blackTurn){
     else if (waitingForPromotion)
     {
         // Dim the board
-    sf::RectangleShape dim({800.f, 800.f});
-    dim.setFillColor(sf::Color(0, 0, 0, 150));
-    window.draw(dim);
+        sf::RectangleShape dim({800.f, 800.f});
+        dim.setFillColor(sf::Color(0, 0, 0, 150));
+        window.draw(dim);
 
 
-    // Popup box
-    sf::RectangleShape box({600.f, 200.f});
-    box.setPosition({100.f, 300.f});
-    box.setFillColor(sf::Color(230, 230, 230));
+        // Popup box
+        sf::RectangleShape box({600.f, 200.f});
+        box.setPosition({100.f, 300.f});
+        box.setFillColor(sf::Color(230, 230, 230));
 
-    window.draw(box);
+        window.draw(box);
 
 
-    // Title
-    sf::Text title(font, "Promotion", 100);
-    title.setFillColor(sf::Color::Black);
-    title.setPosition({150.f, 300.f});
+        // Title
+        sf::Text title(font, "Promotion", 100);
+        title.setFillColor(sf::Color::Black);
+        title.setPosition({150.f, 300.f});
 
-    window.draw(title);
+        window.draw(title);
 
-    // Draw the pieces
-    Queen queen({4, 2}, texture, !blackTurn);
-    Rook rook({4, 3}, texture, !blackTurn);
-    Bishop bishop({4, 4}, texture, !blackTurn);
-    Knight knight({4, 5}, texture, !blackTurn);
+        // Draw the pieces
+        Queen queen({4, 2}, texture, !blackTurn);
+        Rook rook({4, 3}, texture, !blackTurn);
+        Bishop bishop({4, 4}, texture, !blackTurn);
+        Knight knight({4, 5}, texture, !blackTurn);
 
-    // Better: make a draw version that accepts position
-    queen.draw(window);
-    rook.draw(window);
-    bishop.draw(window);
-    knight.draw(window);
+        // Better: make a draw version that accepts position
+        queen.draw(window);
+        rook.draw(window);
+        bishop.draw(window);
+        knight.draw(window);
     }
 }
 
@@ -264,13 +264,39 @@ void Board::checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::
 }
 
 
+std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Square>& moves, int& direction){
+    int row = piece.getPosition().row;
+    int col = piece.getPosition().col;
+    Piece* leftPiece = getPieceAt(Square{row, col-1});
+    Piece* rightPiece = getPieceAt(Square{row, col+1});
+           
+
+    if ((piece.getBlack()&&row==4)||(!piece.getBlack()&&row==3)){
+        if (leftPiece && leftPiece->canEnPassant){
+            moves.push_back(Square{row+direction,col-1});
+        }
+        if (rightPiece && rightPiece->canEnPassant){
+            moves.push_back(Square{row+direction,col+1});
+        }
+    }
+    return {leftPiece, rightPiece};
+}
+
+
 std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
 
     int direction;
     if (piece.getBlack()){direction = 1;}  
-    else{direction = -1;}   
+    else{direction = -1;}  
+
+    Square currPos = piece.getPosition();
+    currPos.row+=direction;currPos.col+=direction;
+    checkDiag(currPos, piece, careAboutCheck, moves);
+    currPos.col-=direction*2;
+    checkDiag(currPos, piece, careAboutCheck, moves);
+    enPassant(piece, moves, direction);
 
     for (Square newPos : piece.getDirections())
     {
@@ -289,12 +315,8 @@ std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
                 
             }
         }
-        Square currPos = piece.getPosition();
 
-        currPos.row+=direction;currPos.col+=direction;
-        checkDiag(currPos, piece, careAboutCheck, moves);
-        currPos.col-=direction*2;
-        checkDiag(currPos, piece, careAboutCheck, moves);
+        if (forwardPiece){break;}
     }
     return moves;
 }
@@ -368,17 +390,32 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
     {
         Piece* otherPiece = board.getPieceAt(clicked);
 
+        int difference = clicked.row - selected->getPosition().row;
+
+        
         if (otherPiece)
         {
             board.removePieceAt(clicked);
+        } else{
+            if (clicked.row != selected->getPosition().row && 
+                clicked.col != selected->getPosition().col){
+                    board.removePieceAt(Square{selected->getPosition().row, 
+                                        clicked.col});
+            }
         }
 
         selected->setPosition(clicked);
         selected->deselect();
 
         handleLoss(blackTurn);
+        for (auto& piece : board.getPieces())
+        {
+            piece->canEnPassant = false;
+        }
 
         if (((*selected).getType() == PieceType::Pawn)){
+            
+            if (difference == 2 || difference == -2){selected->canEnPassant=true;}
             (*selected).setFirstMove();
             if (selected != nullptr){detectIfPromotion(*selected);}
         }   
@@ -553,6 +590,7 @@ void Board::finishPromotion(PieceType type)
     waitingForPromotion = false;
     pawnToPromote = nullptr;
 }
+
 
 void Board::addPiece(PieceType type, Square pos, bool black){
 

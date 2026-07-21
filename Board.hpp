@@ -45,6 +45,9 @@ public:
         return waitingForPromotion;
     }
 
+    
+    std::vector<Piece*> enPassant(Piece& piece, std::vector<Square>& moves, int& direction);
+
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;

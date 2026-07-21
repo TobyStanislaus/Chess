@@ -8,9 +8,9 @@ public:
         : Piece(pos, texture,black)
     {
         setSprite(PieceType::Bishop);
-        //color = sf::Color::Black;
     }
 
     std::vector<Square> getDirections() override;
     PieceType getType() const override;
+    
 };
