@@ -210,18 +210,40 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 }
 
 
+
+void Board::checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Square>& moves){
+    Piece* diagPiece = getPieceAt(currPos);
+
+    if (diagPiece != nullptr &&
+        diagPiece->getBlack() != piece.getBlack())
+    {
+        if (careAboutCheck){
+            if (!testMoveForCheck(piece, currPos)){
+                moves.push_back(currPos);
+            }
+        } else{
+            decideWhetherToAddMove(piece, currPos, moves, careAboutCheck);
+        }
+    }
+}
+
 std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
 
+    int direction;
+    if (piece.getBlack()){direction = 1;}  
+    else{direction = -1;}   
+
     for (Square newPos : piece.getDirections())
     {
-        Piece* otherPiece = getPieceAt(newPos);
+        Piece* forwardPiece = getPieceAt(newPos);
+
 
         if (!inBounds(newPos)){continue;}
-        if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
+        if (forwardPiece == nullptr)
         {
-            if (otherPiece == nullptr && careAboutCheck){
+            if (careAboutCheck){
                 if (!testMoveForCheck(piece, newPos)){
                     moves.push_back(newPos);
                 }
@@ -230,6 +252,12 @@ std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
                 
             }
         }
+        Square currPos = piece.getPosition();
+
+        currPos.row+=direction;currPos.col+=direction;
+        checkDiag(currPos, piece, careAboutCheck, moves);
+        currPos.col-=direction*2;
+        checkDiag(currPos, piece, careAboutCheck, moves);
     }
     return moves;
 }
@@ -315,7 +343,7 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
         if (((*selected).getType() == PieceType::Pawn)){
             (*selected).setFirstMove();
         }   
-        
+
         return true; // <-- actual move happened
     }
 

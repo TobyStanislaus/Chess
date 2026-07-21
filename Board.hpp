@@ -33,6 +33,7 @@ public:
     bool areUCheckMated(bool blackTurn);
     void handleLoss(bool blackTurn);
 
+    void checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Square>& moves);
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;
