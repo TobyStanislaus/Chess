@@ -244,7 +244,7 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
         Piece* otherPiece = getPieceAt(newPos);
 
         if (!inBounds(newPos)){continue;}
-        else if (otherPiece == nullptr || !(otherPiece->getBlack() == piece.getBlack()))
+        else if (otherPiece == nullptr || otherPiece->getBlack() != piece.getBlack())
         { 
             if (otherPiece == nullptr && careAboutCheck){ // nothing there and care about check
                 if (!testMoveForCheck(piece, newPos)){
