@@ -48,6 +48,10 @@ public:
             firstMove = false;
         }
     }
+    
+    bool getFirstMove(){
+        return firstMove;
+    }
        
     Square getPosition() const
     {

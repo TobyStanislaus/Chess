@@ -26,7 +26,7 @@ public:
     bool movePiece(Board& board, Square& clicked, bool blackTurn);
     
     bool testMoveForCheck(Piece& piece, Square& dir);
-    bool checkForCheck(bool isBlack);
+    bool checkForCheck(bool isBlack,Square kingPosition);
 
     void decideWhetherToAddMove(Piece& piece, Square& newPos, std::vector<Square>& moves, bool careAboutCheck);
 
@@ -47,6 +47,7 @@ public:
 
     
     std::vector<Piece*> enPassant(Piece& piece, std::vector<Square>& moves, int& direction);
+    int canCastle(bool isBlack);
 
 private:
     sf::Texture texture;

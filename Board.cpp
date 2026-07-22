@@ -225,6 +225,22 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
 
+    if (careAboutCheck && piece.getType() == PieceType::King){
+        bool black = piece.getBlack();
+        int success = canCastle(black);
+        if (success==1){
+            moves.push_back(Square{piece.getPosition().row, 2});
+        }
+        else if (success==2){
+            moves.push_back(Square{piece.getPosition().row, 6});
+        }
+        else if (success==3){
+            moves.push_back(Square{piece.getPosition().row, 2});
+            moves.push_back(Square{piece.getPosition().row, 6});
+        }
+        
+    }
+
     for (Square newPos : piece.getDirections())
     {   
         Piece* otherPiece = getPieceAt(newPos);
@@ -389,16 +405,16 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
     if (selected && isLegalMove(clicked, getMoves(*selected, true)))
     {
         Piece* otherPiece = board.getPieceAt(clicked);
-
-        int difference = clicked.row - selected->getPosition().row;
-
+        int differenceRow = clicked.row - selected->getPosition().row;
+        int differenceCol = clicked.col - selected->getPosition().col;
         
         if (otherPiece)
         {
             board.removePieceAt(clicked);
         } else{
             if (clicked.row != selected->getPosition().row && 
-                clicked.col != selected->getPosition().col){
+                clicked.col != selected->getPosition().col &&
+                ((*selected).getType() == PieceType::Pawn)){
                     board.removePieceAt(Square{selected->getPosition().row, 
                                         clicked.col});
             }
@@ -415,12 +431,26 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
 
         if (((*selected).getType() == PieceType::Pawn)){
             
-            if (difference == 2 || difference == -2){selected->canEnPassant=true;}
-            (*selected).setFirstMove();
+            if (differenceRow == 2 || differenceRow == -2){selected->canEnPassant=true;}
             if (selected != nullptr){detectIfPromotion(*selected);}
-        }   
+        }
 
-        
+        if ((*selected).getType() == PieceType::King){
+            if (differenceCol == 2 || differenceCol == -2){
+                int row;
+                if (blackTurn){row=0;}
+                else {row=7;}
+                if (clicked.col == 2){
+                    removePieceAt(Square{row,0});
+                    addPiece(PieceType::Rook, {row,3}, blackTurn);
+                }else if (clicked.col == 6){
+                    removePieceAt(Square{row,7});
+                    addPiece(PieceType::Rook, {row,5}, blackTurn);
+                }
+            }
+        }
+
+        (*selected).setFirstMove();
         return true; // <-- actual move happened
     }
 
@@ -463,7 +493,7 @@ bool Board::testMoveForCheck(Piece& piece, Square& newPos){
     std::unique_ptr<Piece> removed_piece = removePieceAt(newPos);
     piece.setPosition(newPos);
     
-    bool result = checkForCheck(piece.getBlack());
+    bool result = checkForCheck(piece.getBlack(), {});
 
     if (removed_piece){pieces.push_back(std::move(removed_piece));}   
     piece.setPosition(originalPosition);
@@ -472,11 +502,11 @@ bool Board::testMoveForCheck(Piece& piece, Square& newPos){
 } 
 
 
-bool Board::checkForCheck(bool isBlack)
+bool Board::checkForCheck(bool isBlack, Square kingPosition)
 {
-    Square kingPosition;
-
+    
     // Find the king
+    if (!kingPosition.col){
     for (auto& piece : pieces)
     {
         if (piece->getType()==PieceType::King && piece->getBlack() == isBlack)
@@ -484,6 +514,7 @@ bool Board::checkForCheck(bool isBlack)
             kingPosition = piece->getPosition();
             break;
         }
+    }
     }
 
     // Check if any enemy piece attacks it
@@ -518,10 +549,11 @@ bool Board::areUCheckMated(bool blackTurn)
 void Board::handleLoss(bool blackTurn){
         // check checkmate 
     if (areUCheckMated(blackTurn)){
-
         gameOver = true;
 
-        if (blackTurn)
+        if (!checkForCheck(!blackTurn, {}))
+            gameOverMessage = "Stalemate - draw";
+        else if (blackTurn)
             gameOverMessage = "Black has won!";
         else
             gameOverMessage = "White has won!";
@@ -625,3 +657,37 @@ void Board::addPiece(PieceType type, Square pos, bool black){
     }
 }
 
+
+int Board::canCastle(bool isBlack){
+    int row;
+    int sum=0;
+    if (isBlack){row=0;}
+    else {row=7;}
+    Piece* king = getPieceAt({row,4});
+    Piece* rook = getPieceAt({row,0});
+    
+    if (!king || !rook) {
+        return sum;
+    }
+
+    if (!(*king).getFirstMove()||!(*rook).getFirstMove()){
+        return sum;
+    }
+
+    if ((!checkForCheck(isBlack,{row,2})
+        &&!checkForCheck(isBlack,{row,3})
+        &&!checkForCheck(isBlack,{row,4})) 
+        &&(!getPieceAt({row,1})
+            &&!getPieceAt({row,2})
+            &&!getPieceAt({row,3})))
+            {sum+=1;}
+    
+    if ((!checkForCheck(isBlack,{row,4})
+        &&!checkForCheck(isBlack,{row,5})
+        &&!checkForCheck(isBlack,{row,6})) 
+        &&(!getPieceAt({row,5})
+            &&!getPieceAt({row,6})))
+            {sum+=2;}
+    
+    return sum;
+}
