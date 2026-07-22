@@ -23,7 +23,7 @@ public:
     std::unique_ptr<Piece> removePieceAt(Square square);
 
     bool isLegalMove(Square& clicked, std::vector<Square> moves);
-    bool movePiece(Board& board, Square& clicked, bool blackTurn);
+    bool movePiece(Board& board, Square& clicked, bool blackTurn, Piece* selected);
     
     bool testMoveForCheck(Piece& piece, Square& dir);
     bool checkForCheck(bool isBlack,Square kingPosition);

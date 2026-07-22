@@ -386,21 +386,9 @@ bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
 }
 
 
-bool Board::movePiece(Board& board, Square& clicked, bool blackTurn)
+bool Board::movePiece(Board& board, Square& clicked, bool blackTurn, Piece* selected)
 {       
 
-    Piece* selected = nullptr;
-
-    for (auto& piece : board.getPieces())
-    {
-        if (piece->isSelected())
-        {
-            selected = piece.get();
-            break;
-        }
-    }
-
-    
     // Moving selected piece
     if (selected && isLegalMove(clicked, getMoves(*selected, true)))
     {
@@ -576,17 +564,11 @@ void Board::detectIfPromotion(Piece& piece){
 
 void Board::handlePromotionClick(Square clicked)
 {       
-
-    if (!waitingForPromotion)
-        return;
-
-
     // Queen button
     if (clicked == Square{4, 2})
     {
         finishPromotion(PieceType::Queen);
     }
-
 
     // Rook button
     else if (clicked == Square{4, 3})
@@ -594,16 +576,14 @@ void Board::handlePromotionClick(Square clicked)
         finishPromotion(PieceType::Rook);
     }
 
-
     // Bishop button
     else if (clicked == Square{4, 4})
     {
         finishPromotion(PieceType::Bishop);
     }
 
-
     // Knight button
-    else if (clicked == Square{4, 2})
+    else if (clicked == Square{4, 5})
     {
         finishPromotion(PieceType::Knight);
     }
@@ -612,11 +592,12 @@ void Board::handlePromotionClick(Square clicked)
 
 void Board::finishPromotion(PieceType type)
 {
+    if (!pawnToPromote)return;
+
     Square pos = pawnToPromote->getPosition();
     bool black = pawnToPromote->getBlack();
 
     removePieceAt(pos);
-
     addPiece(type, pos, black);
 
     waitingForPromotion = false;
@@ -625,8 +606,6 @@ void Board::finishPromotion(PieceType type)
 
 
 void Board::addPiece(PieceType type, Square pos, bool black){
-
-
     removePieceAt(pos);
 
     switch (type)
