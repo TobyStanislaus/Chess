@@ -55,8 +55,10 @@ void Game::handleInput(sf::RenderWindow& window){
     }
 
     for (auto& piece : board.getPieces()){
+        Piece* selected = nullptr;
         if (((piece->getPosition() == clicked) && piece->getBlack()==blackTurn)){
-            board.movePiece(board, clicked, blackTurn, nullptr);
+            if (piece->isSelected()){selected = piece.get();}
+            board.movePiece(board, clicked, blackTurn, selected);
             break;
         } else if (piece->isSelected()){
             bool moved = board.movePiece(board, clicked, blackTurn, piece.get());

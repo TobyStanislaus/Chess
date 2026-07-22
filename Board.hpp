@@ -48,6 +48,7 @@ public:
     
     std::vector<Piece*> enPassant(Piece& piece, std::vector<Square>& moves, int& direction);
     int canCastle(bool isBlack);
+    void handleCastling(Piece& piece, std::vector<Square>& moves);
 
 private:
     sf::Texture texture;

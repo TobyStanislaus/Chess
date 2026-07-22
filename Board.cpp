@@ -221,28 +221,26 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 }
 
 
+void Board::handleCastling(Piece& piece, std::vector<Square>& moves){
+    bool black = piece.getBlack();
+    int success = canCastle(black);
+    if (success==1){moves.push_back(Square{piece.getPosition().row, 2});}
+    else if (success==2){moves.push_back(Square{piece.getPosition().row, 6});}
+    else if (success==3){moves.push_back(Square{piece.getPosition().row, 2});
+                            moves.push_back(Square{piece.getPosition().row, 6});}
+}
+
+
 std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 {
     std::vector<Square> moves;
 
     if (careAboutCheck && piece.getType() == PieceType::King){
-        bool black = piece.getBlack();
-        int success = canCastle(black);
-        if (success==1){
-            moves.push_back(Square{piece.getPosition().row, 2});
-        }
-        else if (success==2){
-            moves.push_back(Square{piece.getPosition().row, 6});
-        }
-        else if (success==3){
-            moves.push_back(Square{piece.getPosition().row, 2});
-            moves.push_back(Square{piece.getPosition().row, 6});
-        }
-        
+        handleCastling(piece, moves);
     }
 
     for (Square newPos : piece.getDirections())
-    {   
+    {
         Piece* otherPiece = getPieceAt(newPos);
 
         if (!inBounds(newPos)){continue;}
@@ -388,8 +386,7 @@ bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
 
 bool Board::movePiece(Board& board, Square& clicked, bool blackTurn, Piece* selected)
 {       
-
-    // Moving selected piece
+    // Moving selected piece - must have clicked on a valid square 
     if (selected && isLegalMove(clicked, getMoves(*selected, true)))
     {
         Piece* otherPiece = board.getPieceAt(clicked);
@@ -446,12 +443,10 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn, Piece* sele
     else if (selected && selected->getPosition() == clicked)
     {
         selected->deselect();
-
-        handleLoss(blackTurn);
         return false;
     }
 
-    // Selecting a piece
+    // Selecting a piece - deselect all, then selected our piece
     else
     {
         for (auto& piece : board.getPieces())
@@ -464,13 +459,10 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn, Piece* sele
                 }
 
                 piece->select();
-
-                handleLoss(blackTurn);
                 return false; // <-- only selected, no move
             }
         }
     }
-
     return false;
 }
 
