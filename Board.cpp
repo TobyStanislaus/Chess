@@ -215,10 +215,11 @@ std::vector<Move> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 
             if (otherPiece == nullptr){ //No piece
                 decideWhetherToAddMove(newMove, moves, careAboutCheck);
-                
-            } else if (otherPiece->getBlack() == piece.getBlack()) // piece on same team
+            } 
+            else if (otherPiece->getBlack() == piece.getBlack()) // piece on same team
                 break;
             else{ // piece on other team
+                newMove.capturedPiece = otherPiece;
                 decideWhetherToAddMove(newMove, moves, careAboutCheck);
                 break;
             }
@@ -232,11 +233,17 @@ std::vector<Move> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 void Board::handleCastling(Piece& piece, std::vector<Move>& moves){
     bool black = piece.getBlack();
     int success = canCastle(black);
-    if (success==1){moves.push_back(Move{piece.getPosition(),Square{piece.getPosition().row, 2}});}
-    else if (success==2){Move{piece.getPosition(),Square{piece.getPosition().row, 6}};}
-
-    else if (success==3){Move{piece.getPosition(),Square{piece.getPosition().row, 2}};
-                            Move{piece.getPosition(),Square{piece.getPosition().row, 6}};}
+    int row = piece.getPosition().row;
+    if (success==1 || success==3)
+        {moves.push_back(Move{
+            piece.getPosition(),Square{row, 2},
+            PieceType::Queen, nullptr, true, false
+        });}
+    if (success==2 || success==3)
+        {moves.push_back(Move{
+            piece.getPosition(),Square{row, 6},
+            PieceType::Queen, nullptr, true, false
+        });}
 }
 
 
@@ -250,19 +257,18 @@ std::vector<Move> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 
     for (Square newPos : piece.getDirections())
     {
-        Piece* otherPiece = getPieceAt(newPos);
-
         if (!inBounds(newPos)){continue;}
-        else if (otherPiece == nullptr || otherPiece->getBlack() != piece.getBlack())
-        { 
-            Move newMove = {piece.getPosition(),newPos};
-            if (otherPiece == nullptr && careAboutCheck){ // nothing there and care about check
-                if (!testMoveForCheck(newMove)){
-                    moves.push_back(newMove);
-                }
-            } else { // different team or do not care about check
-                decideWhetherToAddMove(newMove, moves, careAboutCheck);
-            }
+
+
+        Piece* otherPiece = getPieceAt(newPos);
+        Move newMove = {piece.getPosition(), newPos};
+
+        if (otherPiece == nullptr){ 
+            decideWhetherToAddMove(newMove, moves, careAboutCheck);
+        }
+        else if (otherPiece->getBlack() != piece.getBlack()){
+            newMove.capturedPiece = otherPiece;
+            decideWhetherToAddMove(newMove, moves, careAboutCheck);
         }
     }
 
@@ -270,15 +276,16 @@ std::vector<Move> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 }
 
 
-void Board::checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Move>& moves){
-    Piece* diagPiece = getPieceAt(currPos);
-    Move newMove = {piece.getPosition(), currPos};
-    
+void Board::checkDiag(Move newMove, bool& careAboutCheck, std::vector<Move>& moves){
+    Piece* diagPiece = getPieceAt(newMove.to);
+    Piece* piece = getPieceAt(newMove.from);
+
     if (diagPiece != nullptr &&
-        diagPiece->getBlack() != piece.getBlack())
+        diagPiece->getBlack() != piece->getBlack())
     {
         if (careAboutCheck){
             if (!testMoveForCheck(newMove)){
+                newMove.capturedPiece = diagPiece;
                 moves.push_back(newMove);
             }
         } else{
@@ -297,10 +304,18 @@ std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Move>& moves, int
 
     if ((piece.getBlack()&&row==4)||(!piece.getBlack()&&row==3)){
         if (leftPiece && leftPiece->canEnPassant){
-            moves.push_back(Move{piece.getPosition(),{row+direction,col-1}});
+            moves.push_back(Move{
+                piece.getPosition(), Square{row+direction,col-1},
+                PieceType::Queen, leftPiece, false, true
+            }
+            
+            );
         }
         if (rightPiece && rightPiece->canEnPassant){
-            moves.push_back(Move{piece.getPosition(),Square{row+direction,col+1}});
+            moves.push_back(Move{
+                piece.getPosition(),Square{row+direction,col+1},
+                PieceType::Queen, rightPiece, false, true
+            });
         }
     }
     return {leftPiece, rightPiece};
@@ -315,11 +330,16 @@ std::vector<Move> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
     if (piece.getBlack()){direction = 1;}  
     else{direction = -1;}  
 
+    
+
     Square currPos = piece.getPosition();
     currPos.row+=direction;currPos.col+=direction;
-    checkDiag(currPos, piece, careAboutCheck, moves);
+    Move newMove = {piece.getPosition(), currPos};
+    checkDiag(newMove, careAboutCheck, moves);
     currPos.col-=direction*2;
-    checkDiag(currPos, piece, careAboutCheck, moves);
+    newMove = {piece.getPosition(), currPos};
+    checkDiag(newMove, careAboutCheck, moves);
+
     enPassant(piece, moves, direction);
 
     for (Square newPos : piece.getDirections())
@@ -429,55 +449,42 @@ bool Board::isLegalMove(Square& clicked, std::vector<Move> moves)
 
 
 void Board::makeMove(Move& move, bool& blackTurn){
-    Square clicked = move.to;
     Piece* selected = getPieceAt(move.from);
 
-
-    Piece* otherPiece = getPieceAt(clicked);
-    int differenceRow = clicked.row - selected->getPosition().row;
-    int differenceCol = clicked.col - selected->getPosition().col;
+    int differenceCol = move.to.col - selected->getPosition().col;
     
-    if (otherPiece)
-    {
-        removePieceAt(clicked);
-    } else{
-        if (clicked.row != selected->getPosition().row && 
-            clicked.col != selected->getPosition().col &&
-            ((*selected).getType() == PieceType::Pawn)){
-                removePieceAt(Square{selected->getPosition().row, 
-                                    clicked.col});
-        }
+    if (move.isEnPassant){
+        removePieceAt(move.capturedPiece->getPosition());
+    } else if (move.capturedPiece){
+        removePieceAt(move.to);
     }
 
-    selected->setPosition(clicked);
+
+    selected->setPosition(move.to);
     selected->deselect();
 
-    for (auto& piece : getPieces())
-    {
-        piece->canEnPassant = false;
-    }
+    //reset all pieces to no enpassant
+    for (auto& piece : getPieces()) piece->canEnPassant = false;
 
     if (((*selected).getType() == PieceType::Pawn)){
-        
-        if (differenceRow == 2 || differenceRow == -2){selected->canEnPassant=true;}
-        if (selected != nullptr){detectIfPromotion(*selected);}
+        int diff = move.to.row - move.from.row;
+        if (diff == 2 || diff == -2) selected->canEnPassant=true;
+        detectIfPromotion(*selected);
     }
 
     if ((*selected).getType() == PieceType::King){
         if (differenceCol == 2 || differenceCol == -2){
-            int row;
-            if (blackTurn){row=0;}
-            else {row=7;}
-            if (clicked.col == 2){
+            int row = move.to.row;
+            if (move.to.col == 2){
                 removePieceAt(Square{row,0});
                 addPiece(PieceType::Rook, {row,3}, blackTurn);
-            }else if (clicked.col == 6){
+            }else if (move.to.col == 6){
                 removePieceAt(Square{row,7});
                 addPiece(PieceType::Rook, {row,5}, blackTurn);
             }
         }
     }
-    
+
     (*selected).setFirstMove();
 }
 
@@ -485,54 +492,60 @@ void Board::makeMove(Move& move, bool& blackTurn){
 bool Board::movePiece(Square& clicked, bool blackTurn, Piece* selected)
 {       
     // Moving selected piece - must have clicked on a valid square 
-    if (selected && isLegalMove(clicked, getMoves(*selected, true)))
+    if (selected)
     {
-        Move move{
-            selected->getPosition(),
-            clicked
-        };
-        makeMove(move,blackTurn);
-        return true; // <-- actual move happened
-    }
+        std::vector<Move> legalMoves = getMoves(*selected, true);
 
-    // Clicking selected piece again
-    else if (selected && selected->getPosition() == clicked)
-    {
-        selected->deselect();
-        return false;
-    }
-
-    // Selecting a piece - deselect all, then selected our piece
-    else
-    {
-        for (auto& piece : getPieces())
+        for (Move& m : legalMoves)
         {
-            if ((piece->getPosition() == clicked) && piece->getBlack() == blackTurn)
+            if (m.to == clicked)
             {
-                for (auto& p : getPieces())
-                {
-                    p->deselect();
-                }
-
-                piece->select();
-                return false; // <-- only selected, no move
+                makeMove(m, blackTurn);
+                return true;
             }
         }
+
+        if (selected->getPosition() == clicked)
+        {
+            selected->deselect();
+            return false;
+        }
     }
+
+   
+    for (auto& piece : getPieces())
+    {
+        if ((piece->getPosition() == clicked) && piece->getBlack() == blackTurn)
+        {
+            for (auto& p : getPieces())
+            {
+                p->deselect();
+            }
+
+            piece->select();
+            return false; // <-- only selected, no move
+        }
+    }
+    
     return false;
 }
 
 
 bool Board::testMoveForCheck(Move& move){
     Piece* piece = getPieceAt(move.from);
-    std::unique_ptr<Piece> removed_piece = removePieceAt(move.to);
+    Square capturedOriginalPos{-1,-1};
+
+    if (move.capturedPiece){
+        capturedOriginalPos = move.capturedPiece->getPosition();
+        move.capturedPiece->setPosition({-99,-99});
+    }
 
     piece->setPosition(move.to);
-    
     bool result = checkIfImInCheck(piece->getBlack(), {});
 
-    if (removed_piece){pieces.push_back(std::move(removed_piece));}   
     piece->setPosition(move.from);
+
+    if (move.capturedPiece) move.capturedPiece->setPosition(capturedOriginalPos);
 
     return (result);
 } 

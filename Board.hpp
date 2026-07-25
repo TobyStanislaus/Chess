@@ -33,7 +33,7 @@ public:
     bool hasNoLegalMoves(bool blackTurn);
     void checkIfILost(bool blackTurn);
 
-    void checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Move>& moves);
+    void checkDiag(Move newMove, bool& careAboutCheck, std::vector<Move>& moves);
 
 
     void detectIfPromotion(Piece& piece);

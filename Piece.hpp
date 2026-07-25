@@ -88,10 +88,10 @@ struct Move
     Square from;
     Square to;
 
-    PieceType promotionPiece = PieceType::Queen;
+    PieceType promotionPiece;
 
-    Piece* capturedPiece = nullptr;
-    bool isCastle = false;
-    bool isEnPassant = false;
+    Piece* capturedPiece;
+    bool isCastle;
+    bool isEnPassant;
 
 };
