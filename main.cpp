@@ -16,7 +16,8 @@ int main()
 
     while (window.isOpen())
     {
-        game.handleInput(window);
+        Square clicked = game.handle_click(window);
+        game.handleInput(window, clicked);
 
         window.clear(sf::Color::Black);
         

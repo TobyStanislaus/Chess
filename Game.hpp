@@ -6,9 +6,11 @@ class Game
 private:
     Board board;
     bool blackTurn = false;
+    int turn = 0;
     Piece* selectedPiece = nullptr;
     
 public:
-    void handleInput(sf::RenderWindow& window);
+    Square handle_click(sf::RenderWindow& window);
+    void handleInput(sf::RenderWindow& window, Square clicked);
     void draw(sf::RenderWindow& window);
 };

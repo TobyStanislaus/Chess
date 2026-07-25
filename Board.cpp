@@ -7,6 +7,7 @@
 #include "Bishop.hpp"
 #include "Queen.hpp"
 #include <iostream>
+
 Board::Board()
 {
     if (!texture.loadFromFile("assets/Chess.png"))
@@ -59,6 +60,7 @@ Board::Board()
     pieces.push_back(std::make_unique<Knight>(Square{7,6}, texture, black));
     pieces.push_back(std::make_unique<Rook>(Square{7,7}, texture, black));
 }
+
 
 void Board::draw(sf::RenderWindow& window, bool blackTurn){
     for (auto&piece : pieces){
@@ -158,6 +160,7 @@ void Board::set_potential_moves(const std::vector<Square>& new_moves)
 {
     potential_moves = new_moves;
 };
+
 
 bool Board::inBounds(Square& newPos){
     return (newPos.row>=0 && newPos.col>=0 && newPos.row<8 && newPos.col<8);
@@ -260,7 +263,6 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 }
 
 
-
 void Board::checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Square>& moves){
     Piece* diagPiece = getPieceAt(currPos);
 
@@ -356,6 +358,29 @@ std::vector<Square> Board::getMoves(Piece& piece, bool careAboutCheck)
 }
 
 
+std::vector<Move> Board::getAllLegalMoves(bool black)
+{
+    std::vector<Move> moves;
+
+    for(auto& piece : pieces)
+    {
+        if(piece->getBlack() == black)
+        {
+            auto destinations = getMoves(*piece,true);
+
+            for(auto square : destinations)
+            {
+                moves.push_back(
+                    {piece->getPosition(), square}
+                );
+            }
+        }
+    }
+
+    return moves;
+}
+
+
 std::unique_ptr<Piece> Board::removePieceAt(Square square)
 {
     for (auto it = pieces.begin(); it != pieces.end(); ++it)
@@ -371,7 +396,7 @@ std::unique_ptr<Piece> Board::removePieceAt(Square square)
     return nullptr;
 }
 
-
+       
 bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
 {
     for (auto move : moves)
@@ -384,58 +409,71 @@ bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
 }
 
 
-bool Board::movePiece(Board& board, Square& clicked, bool blackTurn, Piece* selected)
+void Board::makeMove(Move& move, bool& blackTurn){
+    Square clicked = move.to;
+    Piece* selected = getPieceAt(move.from);
+
+
+    Piece* otherPiece = getPieceAt(clicked);
+    int differenceRow = clicked.row - selected->getPosition().row;
+    int differenceCol = clicked.col - selected->getPosition().col;
+    
+    if (otherPiece)
+    {
+        removePieceAt(clicked);
+    } else{
+        if (clicked.row != selected->getPosition().row && 
+            clicked.col != selected->getPosition().col &&
+            ((*selected).getType() == PieceType::Pawn)){
+                removePieceAt(Square{selected->getPosition().row, 
+                                    clicked.col});
+        }
+    }
+
+    selected->setPosition(clicked);
+    selected->deselect();
+
+    handleLoss(blackTurn);
+    for (auto& piece : getPieces())
+    {
+        piece->canEnPassant = false;
+    }
+
+    if (((*selected).getType() == PieceType::Pawn)){
+        
+        if (differenceRow == 2 || differenceRow == -2){selected->canEnPassant=true;}
+        if (selected != nullptr){detectIfPromotion(*selected);}
+    }
+
+    if ((*selected).getType() == PieceType::King){
+        if (differenceCol == 2 || differenceCol == -2){
+            int row;
+            if (blackTurn){row=0;}
+            else {row=7;}
+            if (clicked.col == 2){
+                removePieceAt(Square{row,0});
+                addPiece(PieceType::Rook, {row,3}, blackTurn);
+            }else if (clicked.col == 6){
+                removePieceAt(Square{row,7});
+                addPiece(PieceType::Rook, {row,5}, blackTurn);
+            }
+        }
+    }
+    
+    (*selected).setFirstMove();
+}
+
+
+bool Board::movePiece(Square& clicked, bool blackTurn, Piece* selected)
 {       
     // Moving selected piece - must have clicked on a valid square 
     if (selected && isLegalMove(clicked, getMoves(*selected, true)))
     {
-        Piece* otherPiece = board.getPieceAt(clicked);
-        int differenceRow = clicked.row - selected->getPosition().row;
-        int differenceCol = clicked.col - selected->getPosition().col;
-        
-        if (otherPiece)
-        {
-            board.removePieceAt(clicked);
-        } else{
-            if (clicked.row != selected->getPosition().row && 
-                clicked.col != selected->getPosition().col &&
-                ((*selected).getType() == PieceType::Pawn)){
-                    board.removePieceAt(Square{selected->getPosition().row, 
-                                        clicked.col});
-            }
-        }
-
-        selected->setPosition(clicked);
-        selected->deselect();
-
-        handleLoss(blackTurn);
-        for (auto& piece : board.getPieces())
-        {
-            piece->canEnPassant = false;
-        }
-
-        if (((*selected).getType() == PieceType::Pawn)){
-            
-            if (differenceRow == 2 || differenceRow == -2){selected->canEnPassant=true;}
-            if (selected != nullptr){detectIfPromotion(*selected);}
-        }
-
-        if ((*selected).getType() == PieceType::King){
-            if (differenceCol == 2 || differenceCol == -2){
-                int row;
-                if (blackTurn){row=0;}
-                else {row=7;}
-                if (clicked.col == 2){
-                    removePieceAt(Square{row,0});
-                    addPiece(PieceType::Rook, {row,3}, blackTurn);
-                }else if (clicked.col == 6){
-                    removePieceAt(Square{row,7});
-                    addPiece(PieceType::Rook, {row,5}, blackTurn);
-                }
-            }
-        }
-
-        (*selected).setFirstMove();
+        Move move{
+            selected->getPosition(),
+            clicked
+        };
+        makeMove(move,blackTurn);
         return true; // <-- actual move happened
     }
 
@@ -449,11 +487,11 @@ bool Board::movePiece(Board& board, Square& clicked, bool blackTurn, Piece* sele
     // Selecting a piece - deselect all, then selected our piece
     else
     {
-        for (auto& piece : board.getPieces())
+        for (auto& piece : getPieces())
         {
             if ((piece->getPosition() == clicked) && piece->getBlack() == blackTurn)
             {
-                for (auto& p : board.getPieces())
+                for (auto& p : getPieces())
                 {
                     p->deselect();
                 }

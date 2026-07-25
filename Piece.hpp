@@ -13,6 +13,12 @@ enum class PieceType
     Pawn
 };
 
+struct Move
+{
+    Square from;
+    Square to;
+    //PieceType promotion = PieceType::None;
+};
 
 class Piece
 {

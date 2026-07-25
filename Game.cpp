@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include <iostream>
 
 void display_board(sf::RenderWindow& window){
     for (int row = 0; row < 8; row++)
@@ -23,7 +24,7 @@ void display_board(sf::RenderWindow& window){
 }
 
 
-Square handle_click(sf::RenderWindow& window){
+Square Game::handle_click(sf::RenderWindow& window){
     while (auto event = window.pollEvent())
     {
             if (event->is<sf::Event::Closed>())
@@ -46,8 +47,7 @@ Square handle_click(sf::RenderWindow& window){
 }
 
 
-void Game::handleInput(sf::RenderWindow& window){  
-    Square clicked = handle_click(window);
+void Game::handleInput(sf::RenderWindow& window, Square clicked){  
 
     if (board.isWaitingToPromote())
     {
@@ -58,15 +58,22 @@ void Game::handleInput(sf::RenderWindow& window){
         Piece* selected = nullptr;
         if (((piece->getPosition() == clicked) && piece->getBlack()==blackTurn)){
             if (piece->isSelected()){selected = piece.get();}
-            board.movePiece(board, clicked, blackTurn, selected);
+            board.movePiece(clicked, blackTurn, selected);
             break;
         } else if (piece->isSelected()){
-            bool moved = board.movePiece(board, clicked, blackTurn, piece.get());
-            if (moved){blackTurn = !blackTurn;}
+            bool moved = board.movePiece(clicked, blackTurn, piece.get());
+            if (moved){blackTurn = !blackTurn;
+                       turn+=1;
+                    std::cout<<turn<<std::endl;}
             break;
         }
     }
 
+    if (turn>49){
+        board.setGameOver();
+        board.setDrawMessage();
+    }
+    
     std::vector<Square> none;
     board.set_potential_moves(none);
 

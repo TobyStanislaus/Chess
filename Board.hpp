@@ -23,7 +23,7 @@ public:
     std::unique_ptr<Piece> removePieceAt(Square square);
 
     bool isLegalMove(Square& clicked, std::vector<Square> moves);
-    bool movePiece(Board& board, Square& clicked, bool blackTurn, Piece* selected);
+    bool movePiece(Square& clicked, bool blackTurn, Piece* selected);
     
     bool testMoveForCheck(Piece& piece, Square& dir);
     bool checkForCheck(bool isBlack,Square kingPosition);
@@ -44,11 +44,19 @@ public:
     bool isWaitingToPromote(){
         return waitingForPromotion;
     }
-
+    void setGameOver(){
+        gameOver = true;
+    }
+    void setDrawMessage(){
+        gameOverMessage = "Draw";
+    }
     
     std::vector<Piece*> enPassant(Piece& piece, std::vector<Square>& moves, int& direction);
     int canCastle(bool isBlack);
     void handleCastling(Piece& piece, std::vector<Square>& moves);
+
+    std::vector<Move> getAllLegalMoves(bool black);
+    void makeMove(Move& move, bool& blackTurn);
 
 private:
     sf::Texture texture;
