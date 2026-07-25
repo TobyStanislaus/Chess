@@ -11,29 +11,29 @@ public:
 
     void draw(sf::RenderWindow& window, bool blackTurn);
     std::vector<std::unique_ptr<Piece>>& getPieces();
-    void set_potential_moves(const std::vector<Square>& new_moves);
+    void set_potential_moves(const std::vector<Move>& new_moves);
 
-    std::vector<Square> getSlidingMoves(Piece& piece, bool careAboutCheck);
-    std::vector<Square> getNormalMoves(Piece& piece, bool careAboutCheck);
-    std::vector<Square> getPawnMoves(Piece& piece, bool careAboutCheck);
-    std::vector<Square> getMoves(Piece& piece, bool careAboutCheck);
+    std::vector<Move> getSlidingMoves(Piece& piece, bool careAboutCheck);
+    std::vector<Move> getNormalMoves(Piece& piece, bool careAboutCheck);
+    std::vector<Move> getPawnMoves(Piece& piece, bool careAboutCheck);
+    std::vector<Move> getMoves(Piece& piece, bool careAboutCheck);
 
     bool inBounds(Square& current);
     Piece* getPieceAt(Square current);
     std::unique_ptr<Piece> removePieceAt(Square square);
 
-    bool isLegalMove(Square& clicked, std::vector<Square> moves);
+    bool isLegalMove(Square& clicked, std::vector<Move> moves);
     bool movePiece(Square& clicked, bool blackTurn, Piece* selected);
     
-    bool testMoveForCheck(Piece& piece, Square& dir);
+    bool testMoveForCheck(Move& move);
     bool checkIfImInCheck(bool isBlack,Square kingPosition);
 
-    void decideWhetherToAddMove(Piece& piece, Square& newPos, std::vector<Square>& moves, bool careAboutCheck);
+    void decideWhetherToAddMove(Move& newMove, std::vector<Move>& moves, bool careAboutCheck);
 
     bool hasNoLegalMoves(bool blackTurn);
     void checkIfILost(bool blackTurn);
 
-    void checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Square>& moves);
+    void checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Move>& moves);
 
 
     void detectIfPromotion(Piece& piece);
@@ -51,9 +51,9 @@ public:
         gameOverMessage = "Draw";
     }
     
-    std::vector<Piece*> enPassant(Piece& piece, std::vector<Square>& moves, int& direction);
+    std::vector<Piece*> enPassant(Piece& piece, std::vector<Move>& moves, int& direction);
     int canCastle(bool isBlack);
-    void handleCastling(Piece& piece, std::vector<Square>& moves);
+    void handleCastling(Piece& piece, std::vector<Move>& moves);
 
     std::vector<Move> getAllLegalMoves(bool black);
     void makeMove(Move& move, bool& blackTurn);
@@ -63,7 +63,7 @@ public:
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;
-    std::vector<Square> potential_moves;
+    std::vector<Move> potential_moves;
 
     bool gameOver = false;
     std::string gameOverMessage;

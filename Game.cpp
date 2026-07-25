@@ -88,7 +88,7 @@ void Game::handleInput(sf::RenderWindow& window, Square clicked){
         board.setDrawMessage();
     }
     
-    std::vector<Square> none;
+    std::vector<Move> none;
     board.set_potential_moves(none);
 
     for (auto& piece : board.getPieces())

@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include "Square.hpp"
 
-
 enum class PieceType
 {
     King,
@@ -11,20 +10,6 @@ enum class PieceType
     Bishop,
     Knight,
     Pawn
-};
-
-struct Move
-{
-    Square from;
-    Square to;
-
-    PieceType promotionPiece;
-
-    Piece* capturedPiece;
-
-    bool isCastle;
-    bool isEnPassant;
-
 };
 
 class Piece
@@ -95,4 +80,18 @@ protected:
     sf::Color color;
     bool black;
     bool firstMove;
+};
+
+
+struct Move
+{
+    Square from;
+    Square to;
+
+    PieceType promotionPiece = PieceType::Queen;
+
+    Piece* capturedPiece = nullptr;
+    bool isCastle = false;
+    bool isEnPassant = false;
+
 };

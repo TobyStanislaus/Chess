@@ -77,8 +77,8 @@ void Board::draw(sf::RenderWindow& window, bool blackTurn){
         pawnShape.setOrigin({30.f, 30.f});
 
         pawnShape.setPosition({
-            move.col * 100.f + 50.f,
-            move.row * 100.f + 50.f
+            move.to.col * 100.f + 50.f,
+            move.to.row * 100.f + 50.f
         });
 
         pawnShape.setFillColor(sf::Color::Blue);
@@ -160,7 +160,7 @@ std::vector<std::unique_ptr<Piece>>& Board::getPieces()
 }
 
 
-void Board::set_potential_moves(const std::vector<Square>& new_moves)
+void Board::set_potential_moves(const std::vector<Move>& new_moves)
 {
     potential_moves = new_moves;
 };
@@ -183,20 +183,20 @@ Piece* Board::getPieceAt(Square newPos)
 }
 
 
-void Board::decideWhetherToAddMove(Piece& piece, Square& newPos, std::vector<Square>& moves, bool careAboutCheck){
+void Board::decideWhetherToAddMove(Move& newMove, std::vector<Move>& moves, bool careAboutCheck){
     if (careAboutCheck){
-        if (!testMoveForCheck(piece, newPos)){
-            moves.push_back(newPos);
+        if (!testMoveForCheck(newMove)){
+            moves.push_back(newMove);
         }
     }else{
-        moves.push_back(newPos);
+        moves.push_back(newMove);
     }
 }
 
 
-std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
+std::vector<Move> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 {
-    std::vector<Square> moves;
+    std::vector<Move> moves;
 
     for (Square dir : piece.getDirections())
     {
@@ -211,14 +211,15 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
                 break;
 
             Piece* otherPiece = getPieceAt(newPos);
+            Move newMove = {piece.getPosition(), newPos};
 
             if (otherPiece == nullptr){ //No piece
-                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
+                decideWhetherToAddMove(newMove, moves, careAboutCheck);
                 
             } else if (otherPiece->getBlack() == piece.getBlack()) // piece on same team
                 break;
             else{ // piece on other team
-                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
+                decideWhetherToAddMove(newMove, moves, careAboutCheck);
                 break;
             }
         }
@@ -228,19 +229,20 @@ std::vector<Square> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
 }
 
 
-void Board::handleCastling(Piece& piece, std::vector<Square>& moves){
+void Board::handleCastling(Piece& piece, std::vector<Move>& moves){
     bool black = piece.getBlack();
     int success = canCastle(black);
-    if (success==1){moves.push_back(Square{piece.getPosition().row, 2});}
-    else if (success==2){moves.push_back(Square{piece.getPosition().row, 6});}
-    else if (success==3){moves.push_back(Square{piece.getPosition().row, 2});
-                            moves.push_back(Square{piece.getPosition().row, 6});}
+    if (success==1){moves.push_back(Move{piece.getPosition(),Square{piece.getPosition().row, 2}});}
+    else if (success==2){Move{piece.getPosition(),Square{piece.getPosition().row, 6}};}
+
+    else if (success==3){Move{piece.getPosition(),Square{piece.getPosition().row, 2}};
+                            Move{piece.getPosition(),Square{piece.getPosition().row, 6}};}
 }
 
 
-std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
+std::vector<Move> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 {
-    std::vector<Square> moves;
+    std::vector<Move> moves;
 
     if (careAboutCheck && piece.getType() == PieceType::King){
         handleCastling(piece, moves);
@@ -253,12 +255,13 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
         if (!inBounds(newPos)){continue;}
         else if (otherPiece == nullptr || otherPiece->getBlack() != piece.getBlack())
         { 
+            Move newMove = {piece.getPosition(),newPos};
             if (otherPiece == nullptr && careAboutCheck){ // nothing there and care about check
-                if (!testMoveForCheck(piece, newPos)){
-                    moves.push_back(newPos);
+                if (!testMoveForCheck(newMove)){
+                    moves.push_back(newMove);
                 }
             } else { // different team or do not care about check
-                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
+                decideWhetherToAddMove(newMove, moves, careAboutCheck);
             }
         }
     }
@@ -267,24 +270,25 @@ std::vector<Square> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
 }
 
 
-void Board::checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Square>& moves){
+void Board::checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Move>& moves){
     Piece* diagPiece = getPieceAt(currPos);
-
+    Move newMove = {piece.getPosition(), currPos};
+    
     if (diagPiece != nullptr &&
         diagPiece->getBlack() != piece.getBlack())
     {
         if (careAboutCheck){
-            if (!testMoveForCheck(piece, currPos)){
-                moves.push_back(currPos);
+            if (!testMoveForCheck(newMove)){
+                moves.push_back(newMove);
             }
         } else{
-            decideWhetherToAddMove(piece, currPos, moves, careAboutCheck);
+            decideWhetherToAddMove(newMove, moves, careAboutCheck);
         }
     }
 }
 
 
-std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Square>& moves, int& direction){
+std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Move>& moves, int& direction){
     int row = piece.getPosition().row;
     int col = piece.getPosition().col;
     Piece* leftPiece = getPieceAt(Square{row, col-1});
@@ -293,19 +297,19 @@ std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Square>& moves, i
 
     if ((piece.getBlack()&&row==4)||(!piece.getBlack()&&row==3)){
         if (leftPiece && leftPiece->canEnPassant){
-            moves.push_back(Square{row+direction,col-1});
+            moves.push_back(Move{piece.getPosition(),{row+direction,col-1}});
         }
         if (rightPiece && rightPiece->canEnPassant){
-            moves.push_back(Square{row+direction,col+1});
+            moves.push_back(Move{piece.getPosition(),Square{row+direction,col+1}});
         }
     }
     return {leftPiece, rightPiece};
 }
 
 
-std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
+std::vector<Move> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
 {
-    std::vector<Square> moves;
+    std::vector<Move> moves;
 
     int direction;
     if (piece.getBlack()){direction = 1;}  
@@ -321,17 +325,17 @@ std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
     for (Square newPos : piece.getDirections())
     {
         Piece* forwardPiece = getPieceAt(newPos);
-
+        Move newMove = {piece.getPosition(), newPos};
 
         if (!inBounds(newPos)){continue;}
         if (forwardPiece == nullptr)
         {
             if (careAboutCheck){
-                if (!testMoveForCheck(piece, newPos)){
-                    moves.push_back(newPos);
+                if (!testMoveForCheck(newMove)){
+                    moves.push_back(newMove);
                 }
             } else{
-                decideWhetherToAddMove(piece, newPos, moves, careAboutCheck);
+                decideWhetherToAddMove(newMove, moves, careAboutCheck);
                 
             }
         }
@@ -342,7 +346,7 @@ std::vector<Square> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
 }
 
 
-std::vector<Square> Board::getMoves(Piece& piece, bool careAboutCheck)
+std::vector<Move> Board::getMoves(Piece& piece, bool careAboutCheck)
 {
     switch (piece.getType())
     {
@@ -370,13 +374,11 @@ std::vector<Move> Board::getAllLegalMoves(bool black)
     {
         if(piece->getBlack() == black)
         {
-            auto destinations = getMoves(*piece,true);
+            auto newMoves = getMoves(*piece,true);
 
-            for(auto square : destinations)
+            for(auto move : newMoves)
             {
-                moves.push_back(
-                    {piece->getPosition(), square}
-                );
+                moves.push_back(move);
             }
         }
     }
@@ -414,11 +416,11 @@ std::unique_ptr<Piece> Board::removePieceAt(Square square)
 }
 
        
-bool Board::isLegalMove(Square& clicked, std::vector<Square> moves)
+bool Board::isLegalMove(Square& clicked, std::vector<Move> moves)
 {
     for (auto move : moves)
     {
-        if (move == clicked)
+        if (move.to == clicked)
             return true;
     }
 
@@ -521,16 +523,16 @@ bool Board::movePiece(Square& clicked, bool blackTurn, Piece* selected)
 }
 
 
-bool Board::testMoveForCheck(Piece& piece, Square& newPos){
-    Square originalPosition = piece.getPosition();
+bool Board::testMoveForCheck(Move& move){
+    Piece* piece = getPieceAt(move.from);
+    std::unique_ptr<Piece> removed_piece = removePieceAt(move.to);
 
-    std::unique_ptr<Piece> removed_piece = removePieceAt(newPos);
-    piece.setPosition(newPos);
+    piece->setPosition(move.to);
     
-    bool result = checkIfImInCheck(piece.getBlack(), {});
+    bool result = checkIfImInCheck(piece->getBlack(), {});
 
     if (removed_piece){pieces.push_back(std::move(removed_piece));}   
-    piece.setPosition(originalPosition);
+    piece->setPosition(move.from);
 
     return (result);
 } 
@@ -555,11 +557,11 @@ bool Board::checkIfImInCheck(bool isBlack, Square kingPosition)
     {
         if (enemyPiece->getBlack() != isBlack)
         {
-            std::vector<Square> moves = getMoves(*enemyPiece, false);
+            std::vector<Move> moves = getMoves(*enemyPiece, false);
 
-            for (Square move : moves)
+            for (Move move : moves)
             {
-                if (move == kingPosition)
+                if (move.to == kingPosition)
                     return true;
             }
         }
@@ -580,7 +582,7 @@ bool Board::hasNoLegalMoves(bool blackTurn)
 
 
 void Board::checkIfILost(bool blackTurn){
-        // check checkmate 
+    // check checkmate 
     if (hasNoLegalMoves(blackTurn)){
         gameOver = true;
 
