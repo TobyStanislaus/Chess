@@ -6,7 +6,7 @@ class Game
 private:
     Board board;
     bool blackTurn = false;
-    int turn = 0;
+    int turn = 1;
     Piece* selectedPiece = nullptr;
     
 public:

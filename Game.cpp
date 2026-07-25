@@ -48,28 +48,42 @@ Square Game::handle_click(sf::RenderWindow& window){
 
 
 void Game::handleInput(sf::RenderWindow& window, Square clicked){  
+    
+    if ((turn%2)== 0 && !board.isWaitingToPromote()){
+        Move move = board.makeRandomMove(blackTurn);
+        if (move.from.col != -1){
+            board.makeMove(move, blackTurn);
+            blackTurn = !blackTurn;
+            turn+=1;
+        }else{
+            board.checkIfILost(blackTurn);
+        }
 
-    if (board.isWaitingToPromote())
-    {
-        board.handlePromotionClick(clicked);
+        return;
     }
-
-    for (auto& piece : board.getPieces()){
+    else{
+        board.checkIfILost(blackTurn);
         Piece* selected = nullptr;
-        if (((piece->getPosition() == clicked) && piece->getBlack()==blackTurn)){
-            if (piece->isSelected()){selected = piece.get();}
-            board.movePiece(clicked, blackTurn, selected);
-            break;
-        } else if (piece->isSelected()){
-            bool moved = board.movePiece(clicked, blackTurn, piece.get());
-            if (moved){blackTurn = !blackTurn;
-                       turn+=1;
-                    std::cout<<turn<<std::endl;}
-            break;
+        for (auto& piece : board.getPieces()){
+            if (((piece->getPosition() == clicked) && piece->getBlack()==blackTurn)){
+                if (piece->isSelected()){selected = piece.get();}
+                board.movePiece(clicked, blackTurn, selected);
+                break;
+            } else if (piece->isSelected()){
+                bool moved = board.movePiece(clicked, blackTurn, piece.get());
+                if (moved){blackTurn = !blackTurn;
+                        turn+=1;}
+                break;
+            }
+        }
+
+        if (board.isWaitingToPromote())
+        {
+            board.handlePromotionClick(clicked);
         }
     }
 
-    if (turn>49){
+    if (turn>150){
         board.setGameOver();
         board.setDrawMessage();
     }

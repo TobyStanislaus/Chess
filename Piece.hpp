@@ -17,7 +17,14 @@ struct Move
 {
     Square from;
     Square to;
-    //PieceType promotion = PieceType::None;
+
+    PieceType promotionPiece;
+
+    Piece* capturedPiece;
+
+    bool isCastle;
+    bool isEnPassant;
+
 };
 
 class Piece

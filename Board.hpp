@@ -26,12 +26,12 @@ public:
     bool movePiece(Square& clicked, bool blackTurn, Piece* selected);
     
     bool testMoveForCheck(Piece& piece, Square& dir);
-    bool checkForCheck(bool isBlack,Square kingPosition);
+    bool checkIfImInCheck(bool isBlack,Square kingPosition);
 
     void decideWhetherToAddMove(Piece& piece, Square& newPos, std::vector<Square>& moves, bool careAboutCheck);
 
-    bool areUCheckMated(bool blackTurn);
-    void handleLoss(bool blackTurn);
+    bool hasNoLegalMoves(bool blackTurn);
+    void checkIfILost(bool blackTurn);
 
     void checkDiag(Square& currPos, Piece& piece, bool& careAboutCheck, std::vector<Square>& moves);
 
@@ -57,6 +57,8 @@ public:
 
     std::vector<Move> getAllLegalMoves(bool black);
     void makeMove(Move& move, bool& blackTurn);
+
+    Move makeRandomMove(bool black);
 
 private:
     sf::Texture texture;

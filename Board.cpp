@@ -7,6 +7,10 @@
 #include "Bishop.hpp"
 #include "Queen.hpp"
 #include <iostream>
+#include <random>
+
+std::random_device rd;
+std::mt19937 gen(rd());
 
 Board::Board()
 {
@@ -381,6 +385,19 @@ std::vector<Move> Board::getAllLegalMoves(bool black)
 }
 
 
+Move Board::makeRandomMove(bool black){
+    std::vector<Move> moves = getAllLegalMoves(black);
+
+    if (moves.empty())
+    {
+    return {{-1,-1}, {-1,-1}};
+    }
+
+    std::uniform_int_distribution<int> randI(0, moves.size()-1);
+    return moves[randI(gen)];
+}
+
+
 std::unique_ptr<Piece> Board::removePieceAt(Square square)
 {
     for (auto it = pieces.begin(); it != pieces.end(); ++it)
@@ -433,7 +450,6 @@ void Board::makeMove(Move& move, bool& blackTurn){
     selected->setPosition(clicked);
     selected->deselect();
 
-    handleLoss(blackTurn);
     for (auto& piece : getPieces())
     {
         piece->canEnPassant = false;
@@ -511,7 +527,7 @@ bool Board::testMoveForCheck(Piece& piece, Square& newPos){
     std::unique_ptr<Piece> removed_piece = removePieceAt(newPos);
     piece.setPosition(newPos);
     
-    bool result = checkForCheck(piece.getBlack(), {});
+    bool result = checkIfImInCheck(piece.getBlack(), {});
 
     if (removed_piece){pieces.push_back(std::move(removed_piece));}   
     piece.setPosition(originalPosition);
@@ -520,9 +536,8 @@ bool Board::testMoveForCheck(Piece& piece, Square& newPos){
 } 
 
 
-bool Board::checkForCheck(bool isBlack, Square kingPosition)
+bool Board::checkIfImInCheck(bool isBlack, Square kingPosition)
 {
-    
     // Find the king
     if (!kingPosition.col){
     for (auto& piece : pieces)
@@ -553,10 +568,10 @@ bool Board::checkForCheck(bool isBlack, Square kingPosition)
 }
 
 
-bool Board::areUCheckMated(bool blackTurn)
+bool Board::hasNoLegalMoves(bool blackTurn)
 {
     for (auto& piece : getPieces()){
-        if (piece->getBlack() != blackTurn && getMoves(*piece, true).size()>0){
+        if (piece->getBlack() == blackTurn && getMoves(*piece, true).size()>0){
             return false;
         }
     }
@@ -564,17 +579,17 @@ bool Board::areUCheckMated(bool blackTurn)
 }
 
 
-void Board::handleLoss(bool blackTurn){
+void Board::checkIfILost(bool blackTurn){
         // check checkmate 
-    if (areUCheckMated(blackTurn)){
+    if (hasNoLegalMoves(blackTurn)){
         gameOver = true;
 
-        if (!checkForCheck(!blackTurn, {}))
+        if (!checkIfImInCheck(blackTurn, {}))
             gameOverMessage = "Stalemate - draw";
         else if (blackTurn)
-            gameOverMessage = "Black has won!";
-        else
             gameOverMessage = "White has won!";
+        else
+            gameOverMessage = "Black has won!";
     }
 }
 
@@ -667,7 +682,7 @@ void Board::addPiece(PieceType type, Square pos, bool black){
 }
 
 
-int Board::canCastle(bool isBlack){
+int Board::canCastle(bool isBlack){    
     int row;
     int sum=0;
     if (isBlack){row=0;}
@@ -683,17 +698,17 @@ int Board::canCastle(bool isBlack){
         return sum;
     }
 
-    if ((!checkForCheck(isBlack,{row,2})
-        &&!checkForCheck(isBlack,{row,3})
-        &&!checkForCheck(isBlack,{row,4})) 
+    if ((!checkIfImInCheck(isBlack,{row,2})
+        &&!checkIfImInCheck(isBlack,{row,3})
+        &&!checkIfImInCheck(isBlack,{row,4})) 
         &&(!getPieceAt({row,1})
             &&!getPieceAt({row,2})
             &&!getPieceAt({row,3})))
             {sum+=1;}
     
-    if ((!checkForCheck(isBlack,{row,4})
-        &&!checkForCheck(isBlack,{row,5})
-        &&!checkForCheck(isBlack,{row,6})) 
+    if ((!checkIfImInCheck(isBlack,{row,4})
+        &&!checkIfImInCheck(isBlack,{row,5})
+        &&!checkIfImInCheck(isBlack,{row,6})) 
         &&(!getPieceAt({row,5})
             &&!getPieceAt({row,6})))
             {sum+=2;}
