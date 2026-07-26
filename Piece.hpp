@@ -89,9 +89,11 @@ struct Move
     Square to;
 
     PieceType promotionPiece;
+    bool isPromotion;
 
     Piece* capturedPiece;
     bool isCastle;
     bool isEnPassant;
+
 
 };

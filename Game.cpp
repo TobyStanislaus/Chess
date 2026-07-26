@@ -79,7 +79,11 @@ void Game::handleInput(sf::RenderWindow& window, Square clicked){
 
         if (board.isWaitingToPromote())
         {
-            board.handlePromotionClick(clicked);
+            bool result= board.handlePromotionClick(clicked, blackTurn);
+            if (result){
+                blackTurn = !blackTurn;
+                turn+=1;
+            }
         }
     }
 
@@ -93,7 +97,7 @@ void Game::handleInput(sf::RenderWindow& window, Square clicked){
 
     for (auto& piece : board.getPieces())
     {  
-        if ((*piece).isSelected()){
+        if (piece->isSelected()){
             board.set_potential_moves(board.getMoves(*piece, true));
         }
     }

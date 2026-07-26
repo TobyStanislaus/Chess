@@ -36,9 +36,8 @@ public:
     void checkDiag(Move newMove, bool& careAboutCheck, std::vector<Move>& moves);
 
 
-    void detectIfPromotion(Piece& piece);
-    void handlePromotionClick(Square clicked);
-    void finishPromotion(PieceType type);
+    void detectIfPromotion(Piece& piece, Move& newMove);
+    bool handlePromotionClick(Square clicked, bool& blackTurn);
     void addPiece(PieceType type, Square pos, bool black);
     
     bool isWaitingToPromote(){
@@ -72,4 +71,6 @@ private:
 
     bool waitingForPromotion = false;
     Piece* pawnToPromote = nullptr;
+
+    Move pendingMove;
 };
