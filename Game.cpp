@@ -79,8 +79,7 @@ void Game::handleInput(sf::RenderWindow& window, Square clicked){
 
         if (board.isWaitingToPromote())
         {
-            bool result= board.handlePromotionClick(clicked, blackTurn);
-            if (result){
+            if (board.handlePromotionClick(clicked, blackTurn)){
                 blackTurn = !blackTurn;
                 turn+=1;
             }

@@ -37,10 +37,8 @@ Board::Board()
     pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture, black));
     pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture, black));
     pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture, black));
-
     pieces.push_back(std::make_unique<Queen>(Square{0,3}, texture, black));
     pieces.push_back(std::make_unique<King>(Square{0,4}, texture, black));
-
     pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture, black));
     pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture, black));
     pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture, black));
@@ -280,17 +278,10 @@ void Board::checkDiag(Move newMove, bool& careAboutCheck, std::vector<Move>& mov
     Piece* diagPiece = getPieceAt(newMove.to);
     Piece* piece = getPieceAt(newMove.from);
 
-    if (diagPiece != nullptr &&
-        diagPiece->getBlack() != piece->getBlack())
+    if (diagPiece != nullptr && diagPiece->getBlack() != piece->getBlack())
     {
-        if (careAboutCheck){
-            if (!testMoveForCheck(newMove)){
-                newMove.capturedPiece = diagPiece;
-                moves.push_back(newMove);
-            }
-        } else{
-            decideWhetherToAddMove(newMove, moves, careAboutCheck);
-        }
+        newMove.capturedPiece = diagPiece;
+        decideWhetherToAddMove(newMove, moves, careAboutCheck);
     }
 }
 
@@ -438,25 +429,11 @@ std::unique_ptr<Piece> Board::removePieceAt(Square square)
 
     return nullptr;
 }
-
-       
-bool Board::isLegalMove(Square& clicked, std::vector<Move> moves)
-{
-    for (auto move : moves)
-    {
-        if (move.to == clicked)
-            return true;
-    }
-
-    return false;
-}
-
+      
 
 void Board::makeMove(Move& move, bool& blackTurn){
     Piece* selected = getPieceAt(move.from);
 
-    int differenceCol = move.to.col - selected->getPosition().col;
-    
     if (move.isEnPassant){
         removePieceAt(move.capturedPiece->getPosition());
     } else if (move.capturedPiece){
@@ -481,18 +458,18 @@ void Board::makeMove(Move& move, bool& blackTurn){
         }
     }
 
-    if (selected->getType() == PieceType::King){
-        if (differenceCol == 2 || differenceCol == -2){
-            int row = move.to.row;
-            if (move.to.col == 2){
-                removePieceAt(Square{row,0});
-                addPiece(PieceType::Rook, {row,3}, blackTurn);
-            }else if (move.to.col == 6){
-                removePieceAt(Square{row,7});
-                addPiece(PieceType::Rook, {row,5}, blackTurn);
-            }
+  
+    if (move.isCastle){
+        int row = move.to.row;
+        if (move.to.col == 2){
+            removePieceAt(Square{row,0});
+            addPiece(PieceType::Rook, {row,3}, blackTurn);
+        }else if (move.to.col == 6){
+            removePieceAt(Square{row,7});
+            addPiece(PieceType::Rook, {row,5}, blackTurn);
         }
     }
+    
 
     selected->setFirstMove();
 }
@@ -557,10 +534,9 @@ bool Board::testMoveForCheck(Move& move){
     }
 
     piece->setPosition(move.to);
-    bool result = checkIfImInCheck(piece->getBlack(), {});
+    bool result = checkIfImInCheck(piece->getBlack());
 
     piece->setPosition(move.from);
-
     if (move.capturedPiece) move.capturedPiece->setPosition(capturedOriginalPos);
 
     return (result);
@@ -570,7 +546,7 @@ bool Board::testMoveForCheck(Move& move){
 bool Board::checkIfImInCheck(bool isBlack, Square kingPosition)
 {
     // Find the king
-    if (!kingPosition.col){
+    if (kingPosition.row == -1 && kingPosition.col == -1){
     for (auto& piece : pieces)
     {
         if (piece->getType()==PieceType::King && piece->getBlack() == isBlack)
@@ -615,7 +591,7 @@ void Board::checkIfILost(bool blackTurn){
     if (hasNoLegalMoves(blackTurn)){
         gameOver = true;
 
-        if (!checkIfImInCheck(blackTurn, {}))
+        if (!checkIfImInCheck(blackTurn))
             gameOverMessage = "Stalemate - draw";
         else if (blackTurn)
             gameOverMessage = "White has won!";

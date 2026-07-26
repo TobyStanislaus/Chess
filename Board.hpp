@@ -22,11 +22,10 @@ public:
     Piece* getPieceAt(Square current);
     std::unique_ptr<Piece> removePieceAt(Square square);
 
-    bool isLegalMove(Square& clicked, std::vector<Move> moves);
     bool movePiece(Square& clicked, bool blackTurn, Piece* selected);
     
     bool testMoveForCheck(Move& move);
-    bool checkIfImInCheck(bool isBlack,Square kingPosition);
+    bool checkIfImInCheck(bool isBlack,Square kingPosition = {-1, -1});
 
     void decideWhetherToAddMove(Move& newMove, std::vector<Move>& moves, bool careAboutCheck);
 
@@ -70,7 +69,6 @@ private:
     sf::Font font;
 
     bool waitingForPromotion = false;
-    Piece* pawnToPromote = nullptr;
 
     Move pendingMove;
 };
