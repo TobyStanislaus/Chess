@@ -235,12 +235,12 @@ void Board::handleCastling(Piece& piece, std::vector<Move>& moves){
     if (success==1 || success==3)
         {moves.push_back(Move{
             piece.getPosition(),Square{row, 2},
-            PieceType::Queen, false, nullptr, true, false
+            PieceType::Queen, false, nullptr, true, false, PieceType::King
         });}
     if (success==2 || success==3)
         {moves.push_back(Move{
             piece.getPosition(),Square{row, 6},
-            PieceType::Queen, false, nullptr, true, false
+            PieceType::Queen, false, nullptr, true, false, PieceType::King
         });}
 }
 
@@ -297,7 +297,7 @@ std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Move>& moves, int
         if (leftPiece && leftPiece->canEnPassant){
             moves.push_back(Move{
                 piece.getPosition(), Square{row+direction,col-1},
-                PieceType::Queen, false, leftPiece, false, true
+                PieceType::Queen, false, leftPiece, false, true, PieceType::Pawn
             }
             
             );
@@ -305,7 +305,7 @@ std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Move>& moves, int
         if (rightPiece && rightPiece->canEnPassant){
             moves.push_back(Move{
                 piece.getPosition(),Square{row+direction,col+1},
-                PieceType::Queen, false, rightPiece, false, true
+                PieceType::Queen, false, rightPiece, false, true, PieceType::Pawn
             });
         }
     }
@@ -389,12 +389,8 @@ std::vector<Move> Board::getAllLegalMoves(bool black)
     {
         if(piece->getBlack() == black)
         {
-            auto newMoves = getMoves(*piece,true);
-
-            for(auto move : newMoves)
-            {
-                moves.push_back(move);
-            }
+            std::vector<Move> newMoves = getMoves(*piece, true);
+            moves.insert(moves.end(), newMoves.begin(), newMoves.end());
         }
     }
 
@@ -433,6 +429,7 @@ std::unique_ptr<Piece> Board::removePieceAt(Square square)
 
 void Board::makeMove(Move& move, bool& blackTurn){
     Piece* selected = getPieceAt(move.from);
+    move.movedPiece = selected->getType();
 
     if (move.isEnPassant){
         removePieceAt(move.capturedPiece->getPosition());
@@ -454,6 +451,7 @@ void Board::makeMove(Move& move, bool& blackTurn){
             bool isBlack = selected->getBlack();
             removePieceAt(move.to);
             addPiece(move.promotionPiece, move.to, isBlack);
+            moveHistory.push_back(move);
             return;
         }
     }
@@ -472,6 +470,7 @@ void Board::makeMove(Move& move, bool& blackTurn){
     
 
     selected->setFirstMove();
+    moveHistory.push_back(move);
 }
 
 
@@ -588,6 +587,12 @@ bool Board::hasNoLegalMoves(bool blackTurn)
 
 void Board::checkIfILost(bool blackTurn){
     // check checkmate 
+    if (fiftyMoveDraw()){
+        gameOver = true;
+        gameOverMessage = "Draw - 50 move rule";
+        return;
+    }
+
     if (hasNoLegalMoves(blackTurn)){
         gameOver = true;
 
@@ -690,4 +695,17 @@ int Board::canCastle(bool isBlack){
             {sum+=2;}
     
     return sum;
+}
+
+
+bool Board::fiftyMoveDraw()
+{
+    int count = 0;
+    for (auto it = moveHistory.rbegin(); it != moveHistory.rend(); ++it)
+    {
+        if (it->capturedPiece != nullptr || it->movedPiece == PieceType::Pawn) break;
+        count++;
+        if (count >= 100) return true;
+    }
+    return false;
 }

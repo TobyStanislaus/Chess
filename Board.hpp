@@ -51,6 +51,7 @@ public:
     void setDrawMessage(){
         gameOverMessage = "Draw";
     }
+    const std::vector<Move>& getMoveHistory() const { return moveHistory; }
     
     std::vector<Piece*> enPassant(Piece& piece, std::vector<Move>& moves, int& direction);
     int canCastle(bool isBlack);
@@ -60,6 +61,7 @@ public:
     void makeMove(Move& move, bool& blackTurn);
 
     Move makeRandomMove(bool black);
+    bool fiftyMoveDraw();
 
 private:
     sf::Texture texture;
@@ -74,4 +76,5 @@ private:
     bool waitingForPromotion = false;
 
     Move pendingMove;
+    std::vector<Move> moveHistory;
 };

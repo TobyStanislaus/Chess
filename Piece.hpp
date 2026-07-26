@@ -95,5 +95,5 @@ struct Move
     bool isCastle;
     bool isEnPassant;
 
-
+    PieceType movedPiece = PieceType::Pawn;
 };

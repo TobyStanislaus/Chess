@@ -13,16 +13,18 @@ int main()
 
 
     Game game;
-    bool keepPlaying = true;
-    while (window.isOpen() && keepPlaying)
+
+    while (window.isOpen())
     {
         Square clicked = game.handle_click(window);
-        keepPlaying = game.handleInput(window, clicked);
+
+        if (!game.board.getGameOver())
+        {
+            game.handleInput(window, clicked);
+        }
 
         window.clear(sf::Color::Black);
-        
         game.draw(window);
-
         window.display();
     }
 }
