@@ -45,6 +45,9 @@ public:
     void setGameOver(){
         gameOver = true;
     }
+    bool getGameOver(){
+        return gameOver;
+    }
     void setDrawMessage(){
         gameOverMessage = "Draw";
     }

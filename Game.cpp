@@ -47,23 +47,25 @@ Square Game::handle_click(sf::RenderWindow& window){
 }
 
 
-void Game::handleInput(sf::RenderWindow& window, Square clicked){  
+bool Game::handleInput(sf::RenderWindow& window, Square clicked){  
     
-    if ((turn%2)== 0 && !board.isWaitingToPromote()){
+    PlayerType currentPlayer = blackTurn ? blackPlayer : whitePlayer;
+
+    if (currentPlayer == PlayerType::RandomBot && !board.isWaitingToPromote())
+    {
         Move move = board.makeRandomMove(blackTurn);
         if (move.from.col != -1){
             board.makeMove(move, blackTurn);
             blackTurn = !blackTurn;
             turn+=1;
-        }else{
+        } else {
             board.checkIfILost(blackTurn);
         }
-
-        return;
-    }
-    else{
+    }else
+    {
         board.checkIfILost(blackTurn);
         Piece* selected = nullptr;
+
         for (auto& piece : board.getPieces()){
             if (((piece->getPosition() == clicked) && piece->getBlack()==blackTurn)){
                 if (piece->isSelected()){selected = piece.get();}
@@ -76,7 +78,7 @@ void Game::handleInput(sf::RenderWindow& window, Square clicked){
                 break;
             }
         }
-
+        
         if (board.isWaitingToPromote())
         {
             if (board.handlePromotionClick(clicked, blackTurn)){
@@ -84,6 +86,17 @@ void Game::handleInput(sf::RenderWindow& window, Square clicked){
                 turn+=1;
             }
         }
+
+        std::vector<Move> none;
+        board.set_potential_moves(none);
+
+        for (auto& piece : board.getPieces())
+        {  
+            if (piece->isSelected()){
+                board.set_potential_moves(board.getMoves(*piece, true));
+            }
+        }
+
     }
 
     if (turn>150){
@@ -91,15 +104,7 @@ void Game::handleInput(sf::RenderWindow& window, Square clicked){
         board.setDrawMessage();
     }
     
-    std::vector<Move> none;
-    board.set_potential_moves(none);
-
-    for (auto& piece : board.getPieces())
-    {  
-        if (piece->isSelected()){
-            board.set_potential_moves(board.getMoves(*piece, true));
-        }
-    }
+    return !board.getGameOver();
 }
 
 

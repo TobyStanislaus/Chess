@@ -13,11 +13,11 @@ int main()
 
 
     Game game;
-
-    while (window.isOpen())
+    bool keepPlaying = true;
+    while (window.isOpen() && keepPlaying)
     {
         Square clicked = game.handle_click(window);
-        game.handleInput(window, clicked);
+        keepPlaying = game.handleInput(window, clicked);
 
         window.clear(sf::Color::Black);
         
