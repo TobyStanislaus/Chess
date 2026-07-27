@@ -59,8 +59,19 @@ void Game::handleRandomBotTurn()
 {
     Move move = board.makeRandomMove(blackTurn);
     if (move.from.col != -1){
-        board.makeMove(move, this->blackTurn); // see note below on member vs param
-        this->blackTurn = !this->blackTurn;
+        board.makeMove(move, blackTurn); 
+        blackTurn = !blackTurn;
+    } else {
+        board.checkIfILost(blackTurn);
+    }
+}
+
+
+void Game::handleMinimaxBotTurn(){
+    Move move = board.findBestMove(blackTurn, 3); 
+    if (move.from.col != -1){
+        board.makeMove(move, blackTurn);
+        blackTurn = !blackTurn;
     } else {
         board.checkIfILost(blackTurn);
     }
@@ -111,14 +122,25 @@ bool Game::handleInput(sf::RenderWindow& window, Square clicked, sf::Clock& cloc
 
     PlayerType currentPlayer = blackTurn ? blackPlayer : whitePlayer;
 
-    if (currentPlayer == PlayerType::RandomBot && !board.isWaitingToPromote() && clock.getElapsedTime().asSeconds()>=1)
-    {
-        clock.restart();
-        handleRandomBotTurn();
-    }else if (currentPlayer == PlayerType::Human)
+
+
+
+    if (currentPlayer == PlayerType::Human)
     {
         handleHumanTurn(clicked);
+    } else if (!board.isWaitingToPromote() && clock.getElapsedTime().asSeconds()>=1){
+        if (currentPlayer == PlayerType::RandomBot)
+        {
+            clock.restart();
+            handleRandomBotTurn();
+        }else if (currentPlayer == PlayerType::MinimaxBot)
+        {
+            clock.restart();
+            handleMinimaxBotTurn();
+        }
+
     }
+
 
     return !board.getGameOver();
 }

@@ -770,3 +770,87 @@ bool Board::fiftyMoveDraw()
     }
     return false;
 }
+
+
+int pieceValue(PieceType type){
+    switch(type){
+        case PieceType::Pawn:   return 100;
+        case PieceType::Knight: return 320;
+        case PieceType::Bishop: return 330;
+        case PieceType::Rook:   return 500;
+        case PieceType::Queen:  return 900;
+        case PieceType::King:   return 20000;
+    }
+    return 0;
+}
+
+
+int Board::evaluate(){
+    int score = 0;
+    for (auto& piece : pieces){
+        int value = pieceValue(piece->getType());
+        score += piece->getBlack() ? -value : value;
+    }
+    return score;
+}
+
+int Board::minimax(int depth, bool blackTurn, int alpha, int beta){
+    std::vector<Move> moves = getAllLegalMoves(blackTurn);
+
+    if (moves.empty()){
+        if (checkIfImInCheck(blackTurn, {-1,-1}))
+            return blackTurn ? 100000 - (10-depth) : -100000 + (10-depth); // checkmate — good for the side NOT in check
+        else
+            return 0; // stalemate — draw
+    }
+
+    if (depth == 0){
+        return evaluate();
+    }
+
+    if (blackTurn){ 
+        int best = INT32_MAX;
+        for (Move& m : moves){
+            makeMove(m, blackTurn);
+            int score = minimax(depth-1, false, alpha, beta); // make move, carry on
+            undoMove(blackTurn);
+
+            best = std::min(best, score);
+            beta = std::min(beta, best);
+            if (beta <= alpha) break; // prune
+        }
+        return best;
+    } else { 
+        int best = INT32_MIN;
+        for (Move& m : moves){
+            makeMove(m, blackTurn);
+            int score = minimax(depth-1, true, alpha, beta);
+            undoMove(blackTurn);
+
+            best = std::max(best, score);
+            alpha = std::max(alpha, best);
+            if (beta <= alpha) break; // prune
+        }
+        return best;
+    }
+}
+
+Move Board::findBestMove(bool blackTurn, int depth){
+    std::vector<Move> moves = getAllLegalMoves(blackTurn);
+    if (moves.empty()) return {{-1,-1},{-1,-1}};
+
+    Move bestMove = moves[0];
+    int bestScore = blackTurn ? INT32_MAX : INT32_MIN;
+
+    for (Move& m : moves){
+        makeMove(m, blackTurn);
+        int score = minimax(depth-1, !blackTurn, INT32_MIN, INT32_MAX);
+        undoMove(blackTurn);
+
+        if (blackTurn && score < bestScore){ bestScore = score; bestMove = m; }
+        if (!blackTurn && score > bestScore){ bestScore = score; bestMove = m; }
+    }
+
+    if (bestMove.isPromotion) bestMove.promotionPiece = PieceType::Queen;
+    return bestMove;
+}

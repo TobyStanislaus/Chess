@@ -64,6 +64,10 @@ public:
     bool fiftyMoveDraw();
 
     void undoMove(bool blackTurn);
+    int evaluate();
+
+    int minimax(int depth, bool blackTurn, int alpha, int beta);
+    Move findBestMove(bool blackTurn, int depth);
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;
