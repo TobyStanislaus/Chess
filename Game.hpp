@@ -9,7 +9,7 @@ private:
     Piece* selectedPiece = nullptr;
 
     PlayerType whitePlayer = PlayerType::Human;
-    PlayerType blackPlayer = PlayerType::Human;
+    PlayerType blackPlayer = PlayerType::MinimaxBot;
 public:
     Board board;
     void handleRandomBotTurn();

@@ -68,7 +68,7 @@ void Game::handleRandomBotTurn()
 
 
 void Game::handleMinimaxBotTurn(){
-    Move move = board.findBestMove(blackTurn, 3); 
+    Move move = board.findBestMove(blackTurn, 1); 
     if (move.from.col != -1){
         board.makeMove(move, blackTurn);
         blackTurn = !blackTurn;

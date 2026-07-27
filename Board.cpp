@@ -448,9 +448,12 @@ void Board::makeMove(Move& move, bool& blackTurn){
     }
  
     if (move.capturedPiece){
-    removePieceAt(move.capturedPiece->getPosition());
+        if (move.isEnPassant){
+            removePieceAt(Square{move.from.row, move.to.col});
+        } else {
+            removePieceAt(move.to);
+        }
     }
-
 
     selected->setPosition(move.to);
     selected->deselect();
