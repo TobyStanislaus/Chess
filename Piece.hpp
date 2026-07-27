@@ -41,10 +41,9 @@ public:
 
     virtual std::vector<Square> getDirections() = 0;
 
-    void setFirstMove(){
-        if (firstMove){
-            firstMove = false;
-        }
+    void setFirstMove(bool value){
+        firstMove = value;
+
     }
     
     bool getFirstMove(){
@@ -58,7 +57,7 @@ public:
 
     void setPosition(Square pos)
     {
-    position = pos;
+     position = pos;
     }
 
     bool getBlack() const
@@ -88,12 +87,19 @@ struct Move
     Square from;
     Square to;
 
-    PieceType promotionPiece;
-    bool isPromotion;
+    PieceType promotionPiece = PieceType::Queen;
+    bool isPromotion = false;
 
-    Piece* capturedPiece;
-    bool isCastle;
-    bool isEnPassant;
+    Piece* capturedPiece = nullptr;
+
+    bool isCastle = false;
+    bool isEnPassant = false;
 
     PieceType movedPiece = PieceType::Pawn;
+    PieceType capturedPieceType = PieceType::Pawn;
+    bool capturedPieceBlack = false;
+
+    bool movedPieceFirstMoveBefore = true;   // was selected->getFirstMove() before this move
+    bool hadEnPassantTarget = false;         // was any piece eligible before this move?
+    Square enPassantTargetSquare = {-1,-1};
 };

@@ -13,6 +13,7 @@ int main()
 
 
     Game game;
+    sf::Clock clock;
 
     while (window.isOpen())
     {
@@ -20,7 +21,7 @@ int main()
 
         if (!game.board.getGameOver())
         {
-            game.handleInput(window, clicked);
+            game.handleInput(window, clicked, clock);
         }
 
         window.clear(sf::Color::Black);

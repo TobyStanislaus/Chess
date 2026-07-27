@@ -63,6 +63,7 @@ public:
     Move makeRandomMove(bool black);
     bool fiftyMoveDraw();
 
+    void undoMove(bool blackTurn);
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;

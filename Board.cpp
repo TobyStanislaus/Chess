@@ -181,6 +181,13 @@ Piece* Board::getPieceAt(Square newPos)
 }
 
 
+void setCapturedPiece(Move& newMove, Piece* captured){
+    newMove.capturedPiece = captured;
+    newMove.capturedPieceType = captured->getType();
+    newMove.capturedPieceBlack = captured->getBlack();
+}
+
+
 void Board::decideWhetherToAddMove(Move& newMove, std::vector<Move>& moves, bool careAboutCheck){
     if (careAboutCheck){
         if (!testMoveForCheck(newMove)){
@@ -217,7 +224,7 @@ std::vector<Move> Board::getSlidingMoves(Piece& piece, bool careAboutCheck)
             else if (otherPiece->getBlack() == piece.getBlack()) // piece on same team
                 break;
             else{ // piece on other team
-                newMove.capturedPiece = otherPiece;
+                setCapturedPiece(newMove, otherPiece);
                 decideWhetherToAddMove(newMove, moves, careAboutCheck);
                 break;
             }
@@ -265,7 +272,7 @@ std::vector<Move> Board::getNormalMoves(Piece& piece, bool careAboutCheck)
             decideWhetherToAddMove(newMove, moves, careAboutCheck);
         }
         else if (otherPiece->getBlack() != piece.getBlack()){
-            newMove.capturedPiece = otherPiece;
+            setCapturedPiece(newMove, otherPiece);
             decideWhetherToAddMove(newMove, moves, careAboutCheck);
         }
     }
@@ -280,7 +287,7 @@ void Board::checkDiag(Move newMove, bool& careAboutCheck, std::vector<Move>& mov
 
     if (diagPiece != nullptr && diagPiece->getBlack() != piece->getBlack())
     {
-        newMove.capturedPiece = diagPiece;
+        setCapturedPiece(newMove, diagPiece);
         decideWhetherToAddMove(newMove, moves, careAboutCheck);
     }
 }
@@ -291,24 +298,23 @@ std::vector<Piece*> Board::enPassant(Piece& piece, std::vector<Move>& moves, int
     int col = piece.getPosition().col;
     Piece* leftPiece = getPieceAt(Square{row, col-1});
     Piece* rightPiece = getPieceAt(Square{row, col+1});
-           
 
     if ((piece.getBlack()&&row==4)||(!piece.getBlack()&&row==3)){
+
         if (leftPiece && leftPiece->canEnPassant){
-            moves.push_back(Move{
-                piece.getPosition(), Square{row+direction,col-1},
-                PieceType::Queen, false, leftPiece, false, true, PieceType::Pawn
-            }
-            
-            );
+            Move m{piece.getPosition(), Square{row+direction, col-1}};
+            setCapturedPiece(m, leftPiece);
+            m.isEnPassant = true;
+            moves.push_back(m);
         }
         if (rightPiece && rightPiece->canEnPassant){
-            moves.push_back(Move{
-                piece.getPosition(),Square{row+direction,col+1},
-                PieceType::Queen, false, rightPiece, false, true, PieceType::Pawn
-            });
+            Move m{piece.getPosition(), Square{row+direction, col+1}};
+            setCapturedPiece(m, rightPiece);
+            m.isEnPassant = true;
+            moves.push_back(m);
         }
     }
+
     return {leftPiece, rightPiece};
 }
 
@@ -430,11 +436,19 @@ std::unique_ptr<Piece> Board::removePieceAt(Square square)
 void Board::makeMove(Move& move, bool& blackTurn){
     Piece* selected = getPieceAt(move.from);
     move.movedPiece = selected->getType();
+    move.movedPieceFirstMoveBefore = selected->getFirstMove();
 
-    if (move.isEnPassant){
-        removePieceAt(move.capturedPiece->getPosition());
-    } else if (move.capturedPiece){
-        removePieceAt(move.to);
+    move.hadEnPassantTarget = false;
+    for (auto& piece : getPieces()){
+        if (piece->canEnPassant){
+            move.hadEnPassantTarget = true;
+            move.enPassantTargetSquare = piece->getPosition();
+            break; // only one piece can ever be eligible at once
+        }
+    }
+ 
+    if (move.capturedPiece){
+    removePieceAt(move.capturedPiece->getPosition());
     }
 
 
@@ -455,7 +469,6 @@ void Board::makeMove(Move& move, bool& blackTurn){
             return;
         }
     }
-
   
     if (move.isCastle){
         int row = move.to.row;
@@ -469,8 +482,56 @@ void Board::makeMove(Move& move, bool& blackTurn){
     }
     
 
-    selected->setFirstMove();
+    selected->setFirstMove(false);
     moveHistory.push_back(move);
+} 
+
+
+void Board::undoMove(bool blackTurn){
+    Move move = moveHistory.back();
+
+    if (move.isPromotion){
+        removePieceAt(move.to);
+        addPiece(PieceType::Pawn, move.from, blackTurn);
+    } else {
+        Piece* moved = getPieceAt(move.to);
+        moved->setPosition(move.from);
+    }
+
+    if (move.isCastle){
+        int row = move.from.row;
+        if (move.to.col == 2){
+            removePieceAt({row,3});
+            addPiece(PieceType::Rook, {row,0}, blackTurn);
+        } else if (move.to.col == 6){
+            removePieceAt({row,5});
+            addPiece(PieceType::Rook, {row,7}, blackTurn);
+        }
+    }
+
+    if (move.capturedPiece){
+        if (move.isEnPassant){
+            addPiece(move.capturedPieceType, Square{move.from.row, move.to.col}, move.capturedPieceBlack);
+        } else {
+            addPiece(move.capturedPieceType, move.to, move.capturedPieceBlack);
+        }
+    }
+
+    Piece* restored = getPieceAt(move.from);
+    
+    if (restored) {restored->setFirstMove(move.movedPieceFirstMoveBefore);
+        restored->deselect();
+    }
+
+    // restore canEnPassant exactly as it was before this move
+    for (auto& piece : getPieces()) {piece->canEnPassant = false;
+                                    piece->deselect();}
+    if (move.hadEnPassantTarget){
+        Piece* target = getPieceAt(move.enPassantTargetSquare);
+        if (target) target->canEnPassant = true;
+    }
+
+    moveHistory.pop_back();
 }
 
 

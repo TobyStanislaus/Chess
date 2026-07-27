@@ -27,21 +27,29 @@ void display_board(sf::RenderWindow& window){
 Square Game::handle_click(sf::RenderWindow& window){
     while (auto event = window.pollEvent())
     {
-            if (event->is<sf::Event::Closed>())
-            window.close();
+        if (event->is<sf::Event::Closed>())
+        window.close();
 
-            if (const auto* mouse = event->getIf<sf::Event::MouseButtonPressed>())
+        if (const auto* mouse = event->getIf<sf::Event::MouseButtonPressed>())
+        {
+            if (mouse->button == sf::Mouse::Button::Left)
             {
-                if (mouse->button == sf::Mouse::Button::Left)
-                {
-                    sf::Vector2i pixelPos = mouse->position;
+                sf::Vector2i pixelPos = mouse->position;
 
-                    return {
-                        pixelPos.y / 100,
-                        pixelPos.x / 100
-                    };
-                }
+                return {
+                    pixelPos.y / 100,
+                    pixelPos.x / 100
+                };
             }
+        }
+        if (const auto* key = event->getIf<sf::Event::KeyPressed>())
+        {
+            if (key->code == sf::Keyboard::Key::Q)
+            {
+                return {-50,-50};
+            }
+        }
+
     }
     return {-1, -1};
 }
@@ -93,14 +101,21 @@ void Game::handleHumanTurn(Square clicked)
 }
 
 
-bool Game::handleInput(sf::RenderWindow& window, Square clicked){  
+bool Game::handleInput(sf::RenderWindow& window, Square clicked, sf::Clock& clock){  
     
+    if (clicked.col == -50 && board.getMoveHistory().size()>0 && !board.isWaitingToPromote()){
+        blackTurn = !blackTurn;
+        board.undoMove(blackTurn);
+        return !board.getGameOver();
+    }
+
     PlayerType currentPlayer = blackTurn ? blackPlayer : whitePlayer;
 
-    if (currentPlayer == PlayerType::RandomBot && !board.isWaitingToPromote())
+    if (currentPlayer == PlayerType::RandomBot && !board.isWaitingToPromote() && clock.getElapsedTime().asSeconds()>=1)
     {
+        clock.restart();
         handleRandomBotTurn();
-    }else
+    }else if (currentPlayer == PlayerType::Human)
     {
         handleHumanTurn(clicked);
     }
