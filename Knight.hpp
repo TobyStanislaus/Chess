@@ -4,8 +4,8 @@
 class Knight : public Piece
 {
 public:
-    Knight(Square pos, const sf::Texture& texture,bool black)
-        : Piece(pos, texture,black)
+    Knight(Square pos, const sf::Texture& texture,bool black, bool firstMove)
+        : Piece(pos, texture,black, firstMove)
     {
         setSprite(PieceType::Knight);
     }

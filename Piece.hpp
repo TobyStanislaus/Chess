@@ -16,8 +16,8 @@ class Piece
 {
 public:
 
-    Piece(Square pos, const sf::Texture& texture, bool black)
-        : position(pos), sprite(texture), color(sf::Color::Green), black(black), firstMove(true)
+    Piece(Square pos, const sf::Texture& texture, bool black, bool firstMove)
+        : position(pos), sprite(texture), color(sf::Color::Green), black(black), firstMove(firstMove)
     {
     }
     
@@ -98,8 +98,9 @@ struct Move
     PieceType movedPiece = PieceType::Pawn;
     PieceType capturedPieceType = PieceType::Pawn;
     bool capturedPieceBlack = false;
+    bool capturedPieceFirstMoveBefore = true;
 
-    bool movedPieceFirstMoveBefore = true;   // was selected->getFirstMove() before this move
-    bool hadEnPassantTarget = false;         // was any piece eligible before this move?
+    bool movedPieceFirstMoveBefore = true;   
+    bool hadEnPassantTarget = false;         
     Square enPassantTargetSquare = {-1,-1};
 };

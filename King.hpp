@@ -4,8 +4,8 @@
 class King : public Piece
 {
 public:
-    King(Square pos, const sf::Texture& texture,bool black)
-        : Piece(pos, texture,black)
+    King(Square pos, const sf::Texture& texture,bool black, bool firstMove)
+        : Piece(pos, texture,black, firstMove)
     {
         setSprite(PieceType::King);
     }

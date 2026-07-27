@@ -37,7 +37,7 @@ public:
 
     void detectIfPromotion(Piece& piece, Move& newMove);
     bool handlePromotionClick(Square clicked, bool& blackTurn);
-    void addPiece(PieceType type, Square pos, bool black);
+    void addPiece(PieceType type, Square pos, bool black, bool firstMove);
     
     bool isWaitingToPromote(){
         return waitingForPromotion;

@@ -23,44 +23,44 @@ Board::Board()
     {
         std::cout << "Font failed\n";
     }
-
+    bool firstMove = true;
     bool black = true;
-    pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,0}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,1}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,2}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,3}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,4}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,5}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,6}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{1,7}, texture, black, firstMove));
 
-    pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture, black));
-    pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture, black));
-    pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture, black));
-    pieces.push_back(std::make_unique<Queen>(Square{0,3}, texture, black));
-    pieces.push_back(std::make_unique<King>(Square{0,4}, texture, black));
-    pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture, black));
-    pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture, black));
-    pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture, black));
+    pieces.push_back(std::make_unique<Rook>(Square{0,0}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Knight>(Square{0,1}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Bishop>(Square{0,2}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Queen>(Square{0,3}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<King>(Square{0,4}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Bishop>(Square{0,5}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Knight>(Square{0,6}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Rook>(Square{0,7}, texture, black, firstMove));
 
     black = false;
-    pieces.push_back(std::make_unique<Pawn>(Square{6,0}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{6,1}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{6,2}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{6,3}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{6,4}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{6,5}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{6,6}, texture, black));
-    pieces.push_back(std::make_unique<Pawn>(Square{6,7}, texture, black));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,0}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,1}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,2}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,3}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,4}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,5}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,6}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Pawn>(Square{6,7}, texture, black, firstMove));
 
-    pieces.push_back(std::make_unique<Rook>(Square{7,0}, texture, black));
-    pieces.push_back(std::make_unique<Knight>(Square{7,1}, texture, black));
-    pieces.push_back(std::make_unique<Bishop>(Square{7,2}, texture, black));
-    pieces.push_back(std::make_unique<Queen>(Square{7,3}, texture, black));
-    pieces.push_back(std::make_unique<King>(Square{7,4}, texture, black));
-    pieces.push_back(std::make_unique<Bishop>(Square{7,5}, texture, black));
-    pieces.push_back(std::make_unique<Knight>(Square{7,6}, texture, black));
-    pieces.push_back(std::make_unique<Rook>(Square{7,7}, texture, black));
+    pieces.push_back(std::make_unique<Rook>(Square{7,0}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Knight>(Square{7,1}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Bishop>(Square{7,2}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Queen>(Square{7,3}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<King>(Square{7,4}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Bishop>(Square{7,5}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Knight>(Square{7,6}, texture, black, firstMove));
+    pieces.push_back(std::make_unique<Rook>(Square{7,7}, texture, black, firstMove));
 }
 
 
@@ -138,10 +138,10 @@ void Board::draw(sf::RenderWindow& window, bool blackTurn){
         window.draw(title);
 
         // Draw the pieces
-        Queen queen({4, 2}, texture, blackTurn);
-        Rook rook({4, 3}, texture, blackTurn);
-        Bishop bishop({4, 4}, texture, blackTurn);
-        Knight knight({4, 5}, texture, blackTurn);
+        Queen queen({4, 2}, texture, blackTurn, true);
+        Rook rook({4, 3}, texture, blackTurn, true);
+        Bishop bishop({4, 4}, texture, blackTurn, true);
+        Knight knight({4, 5}, texture, blackTurn, true);
 
         // Better: make a draw version that accepts position
         queen.draw(window);
@@ -185,6 +185,7 @@ void setCapturedPiece(Move& newMove, Piece* captured){
     newMove.capturedPiece = captured;
     newMove.capturedPieceType = captured->getType();
     newMove.capturedPieceBlack = captured->getBlack();
+    newMove.capturedPieceFirstMoveBefore = captured->getFirstMove();
 }
 
 
@@ -467,7 +468,7 @@ void Board::makeMove(Move& move, bool& blackTurn){
         if (move.isPromotion){
             bool isBlack = selected->getBlack();
             removePieceAt(move.to);
-            addPiece(move.promotionPiece, move.to, isBlack);
+            addPiece(move.promotionPiece, move.to, isBlack, true);
             moveHistory.push_back(move);
             return;
         }
@@ -477,10 +478,10 @@ void Board::makeMove(Move& move, bool& blackTurn){
         int row = move.to.row;
         if (move.to.col == 2){
             removePieceAt(Square{row,0});
-            addPiece(PieceType::Rook, {row,3}, blackTurn);
+            addPiece(PieceType::Rook, {row,3}, blackTurn, true);
         }else if (move.to.col == 6){
             removePieceAt(Square{row,7});
-            addPiece(PieceType::Rook, {row,5}, blackTurn);
+            addPiece(PieceType::Rook, {row,5}, blackTurn, true);
         }
     }
     
@@ -495,7 +496,7 @@ void Board::undoMove(bool blackTurn){
 
     if (move.isPromotion){
         removePieceAt(move.to);
-        addPiece(PieceType::Pawn, move.from, blackTurn);
+        addPiece(PieceType::Pawn, move.from, blackTurn, false);
     } else {
         Piece* moved = getPieceAt(move.to);
         moved->setPosition(move.from);
@@ -505,18 +506,19 @@ void Board::undoMove(bool blackTurn){
         int row = move.from.row;
         if (move.to.col == 2){
             removePieceAt({row,3});
-            addPiece(PieceType::Rook, {row,0}, blackTurn);
+            addPiece(PieceType::Rook, {row,0}, blackTurn, false);
         } else if (move.to.col == 6){
             removePieceAt({row,5});
-            addPiece(PieceType::Rook, {row,7}, blackTurn);
+            addPiece(PieceType::Rook, {row,7}, blackTurn, false);
         }
     }
 
     if (move.capturedPiece){
         if (move.isEnPassant){
-            addPiece(move.capturedPieceType, Square{move.from.row, move.to.col}, move.capturedPieceBlack);
+            addPiece(move.capturedPieceType, Square{move.from.row, move.to.col}, move.capturedPieceBlack, false);
+
         } else {
-            addPiece(move.capturedPieceType, move.to, move.capturedPieceBlack);
+            addPiece(move.capturedPieceType, move.to, move.capturedPieceBlack, move.capturedPieceFirstMoveBefore);
         }
     }
 
@@ -696,32 +698,32 @@ bool Board::handlePromotionClick(Square clicked, bool& blackTurn)
 }
 
 
-void Board::addPiece(PieceType type, Square pos, bool black){
+void Board::addPiece(PieceType type, Square pos, bool black, bool firstMove){
 
     switch (type)
     {
     case PieceType::Queen:
-        pieces.push_back(std::make_unique<Queen>(pos, texture, black));
+        pieces.push_back(std::make_unique<Queen>(pos, texture, black, firstMove));
         break;
 
     case PieceType::Rook:
-        pieces.push_back(std::make_unique<Rook>(pos, texture, black));
+        pieces.push_back(std::make_unique<Rook>(pos, texture, black, firstMove));
         break;
 
     case PieceType::Bishop:
-        pieces.push_back(std::make_unique<Bishop>(pos, texture, black));
+        pieces.push_back(std::make_unique<Bishop>(pos, texture, black, firstMove));
         break;
 
     case PieceType::Knight:
-        pieces.push_back(std::make_unique<Knight>(pos, texture, black));
+        pieces.push_back(std::make_unique<Knight>(pos, texture, black, firstMove));
         break;
 
     case PieceType::Pawn:
-        pieces.push_back(std::make_unique<Pawn>(pos, texture, black));
+        pieces.push_back(std::make_unique<Pawn>(pos, texture, black, firstMove));
         break;
 
     case PieceType::King:
-        pieces.push_back(std::make_unique<King>(pos, texture, black));
+        pieces.push_back(std::make_unique<King>(pos, texture, black, firstMove));
         break;
     }
 }
@@ -797,14 +799,15 @@ int Board::evaluate(){
     return score;
 }
 
+
 int Board::minimax(int depth, bool blackTurn, int alpha, int beta){
     std::vector<Move> moves = getAllLegalMoves(blackTurn);
 
     if (moves.empty()){
         if (checkIfImInCheck(blackTurn, {-1,-1}))
-            return blackTurn ? 100000 - (10-depth) : -100000 + (10-depth); // checkmate — good for the side NOT in check
+            return blackTurn ? 100000 - (10-depth) : -100000 + (10-depth); 
         else
-            return 0; // stalemate — draw
+            return 0;
     }
 
     if (depth == 0){
@@ -815,12 +818,12 @@ int Board::minimax(int depth, bool blackTurn, int alpha, int beta){
         int best = INT32_MAX;
         for (Move& m : moves){
             makeMove(m, blackTurn);
-            int score = minimax(depth-1, false, alpha, beta); // make move, carry on
+            int score = minimax(depth-1, false, alpha, beta);
             undoMove(blackTurn);
 
             best = std::min(best, score);
             beta = std::min(beta, best);
-            if (beta <= alpha) break; // prune
+            if (beta <= alpha) break;
         }
         return best;
     } else { 
@@ -832,11 +835,12 @@ int Board::minimax(int depth, bool blackTurn, int alpha, int beta){
 
             best = std::max(best, score);
             alpha = std::max(alpha, best);
-            if (beta <= alpha) break; // prune
+            if (beta <= alpha) break;
         }
         return best;
     }
 }
+
 
 Move Board::findBestMove(bool blackTurn, int depth){
     std::vector<Move> moves = getAllLegalMoves(blackTurn);

@@ -4,8 +4,8 @@
 class Bishop : public Piece
 {
 public:
-    Bishop(Square pos, const sf::Texture& texture,bool black)
-        : Piece(pos, texture,black)
+    Bishop(Square pos, const sf::Texture& texture,bool black, bool firstMove)
+        : Piece(pos, texture,black, firstMove)
     {
         setSprite(PieceType::Bishop);
     }
