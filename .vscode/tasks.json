@@ -9,13 +9,16 @@
                 "-std=c++23",
                 "-g",
                 "-IC:/vcpkg/installed/x64-mingw-dynamic/include",
+                "-IC:/libs/onnxruntime-win-x64-1.26.0/include",
                 "*.cpp",
                 "-o",
                 "Chess.exe",
                 "-LC:/vcpkg/installed/x64-mingw-dynamic/lib",
+                "-LC:/libs/onnxruntime-win-x64-1.26.0/lib",
                 "-lsfml-graphics",
                 "-lsfml-window",
-                "-lsfml-system"
+                "-lsfml-system",
+                "-lonnxruntime.dll"
             ],
             "group": {
                 "kind": "build",

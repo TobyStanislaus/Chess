@@ -6,6 +6,7 @@
 #include "Rook.hpp"
 #include "Bishop.hpp"
 #include "Queen.hpp"
+#include "MCTS.hpp"
 #include <iostream>
 #include <random>
 
@@ -860,4 +861,11 @@ Move Board::findBestMove(bool blackTurn, int depth){
 
     if (bestMove.isPromotion) bestMove.promotionPiece = PieceType::Queen;
     return bestMove;
+}
+
+
+Move Board::findBestMoveMCTS(bool blackTurn, int numSimulations) {
+    MCTSNode root = runMCTS(*this, blackTurn, nnEvaluator, numSimulations, false);
+    if (root.children.empty()) return {{-1,-1}, {-1,-1}};
+    return selectMove(root, 0.0f);
 }

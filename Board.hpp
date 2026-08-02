@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include "Piece.hpp"
+#include "NNEvaluator.hpp"
 
 class Board
 {
@@ -68,6 +69,7 @@ public:
 
     int minimax(int depth, bool blackTurn, int alpha, int beta);
     Move findBestMove(bool blackTurn, int depth);
+    Move findBestMoveMCTS(bool blackTurn, int numSimulations=200);
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;
@@ -82,4 +84,5 @@ private:
 
     Move pendingMove;
     std::vector<Move> moveHistory;
+    NNEvaluator nnEvaluator{"network.onnx"};
 };

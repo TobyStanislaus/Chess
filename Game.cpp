@@ -1,5 +1,7 @@
 #include "Game.hpp"
-#include <iostream>
+
+
+
 
 void display_board(sf::RenderWindow& window){
     for (int row = 0; row < 8; row++)
@@ -78,6 +80,17 @@ void Game::handleMinimaxBotTurn(){
 }
 
 
+void Game::handleMCTSBotTurn(){
+    Move move = board.findBestMoveMCTS(blackTurn, 200);
+    if (move.from.col != -1){
+        board.makeMove(move, blackTurn);
+        blackTurn = !blackTurn;
+    } else {
+        board.checkIfILost(blackTurn);
+    }
+}
+
+
 void Game::handleHumanTurn(Square clicked)
 {
     board.checkIfILost(blackTurn);
@@ -136,6 +149,9 @@ bool Game::handleInput(sf::RenderWindow& window, Square clicked, sf::Clock& cloc
         {
             clock.restart();
             handleMinimaxBotTurn();
+        }else if (currentPlayer == PlayerType::MCTS){
+            clock.restart();
+            handleMCTSBotTurn();
         }
 
     }
