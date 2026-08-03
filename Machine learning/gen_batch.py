@@ -4,6 +4,7 @@ data to disk. Run this to test the pipeline end-to-end and get a feel for
 timing before committing to a full-scale run.
 """
 
+import os
 import time
 import numpy as np
 import torch
@@ -11,13 +12,19 @@ import torch
 from network import ChessNet
 from self_play import play_one_game
 
-NUM_GAMES = 1000
-NUM_SIMULATIONS = 50   # AlphaZero-scale runs use 400-800; kept low here for a quick test
-MAX_MOVES = 100
+NUM_GAMES = 350
+NUM_SIMULATIONS = 100   # AlphaZero-scale runs use 400-800; kept low here for a quick test
+MAX_MOVES = 200
 
 if __name__ == "__main__":
     torch.manual_seed(0)
     net = ChessNet()
+
+    MODEL_FILE = "network.pt"
+    if os.path.exists(MODEL_FILE):
+        print("Loading previous network...")
+        net.load_state_dict(torch.load(MODEL_FILE, map_location="cpu"))
+
     net.eval()
 
     all_boards = []

@@ -67,3 +67,16 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+
+# Python
+__pycache__/
+*.pyc
+
+# ML model checkpoints and generated training data
+*.pt
+*.onnx
+*.npz
+
+# Editor-specific settings
+.vscode/
