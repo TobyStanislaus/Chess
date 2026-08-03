@@ -20,7 +20,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+
 *.so.*
 
 
@@ -35,14 +35,12 @@
 *.lib
 
 # Executables
-*.exe
+
 *.out
 *.app
 
 # Build directories
-build/
-Build/
-build-*/
+
 
 # CMake generated files
 CMakeFiles/
@@ -76,4 +74,3 @@ __pycache__/
 # ML model checkpoints and generated training data
 
 # Editor-specific settings
-.vscode/

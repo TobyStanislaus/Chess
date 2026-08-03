@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Chess",
+            "type": "shell",
+            "command": "C:/mingw64/bin/g++.exe",
+            "args": [
+                "-std=c++23",
+                "-g",
+                "-IC:/vcpkg/installed/x64-mingw-dynamic/include",
+                "-IC:/libs/onnxruntime-win-x64-1.26.0/include",
+                "*.cpp",
+                "-o",
+                "build/Chess.exe",
+                "-LC:/vcpkg/installed/x64-mingw-dynamic/lib",
+                "-LC:/libs/onnxruntime-win-x64-1.26.0/lib",
+                "-lsfml-graphics",
+                "-lsfml-window",
+                "-lsfml-system",
+                "-lonnxruntime.dll"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}
