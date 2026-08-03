@@ -3,15 +3,19 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
-
+import convert_to_cpp
 from network import ChessNet
+from pathlib import Path
+from find_version import find_current_version
 
 # ----------------------------
 # Settings
 # ----------------------------
+ROOT = Path(__file__).resolve().parent.parent
 
-DATA_FILE = "self_play_data.npz"
-MODEL_FILE = "network.pt"
+DATA_FILE = ROOT / "data" / f"version{find_current_version()}" / "self_play_data.npz"
+OLD_MODEL_FILE = ROOT / "data" / f"version{find_current_version()-1}" / "network.pt"
+CURR_MODEL_FILE = ROOT / "data" / f"version{find_current_version()}" / "network.pt"
 
 BATCH_SIZE = 256
 EPOCHS = 10
@@ -61,9 +65,9 @@ def main():
 
     net = ChessNet().to(device)
 
-    if os.path.exists(MODEL_FILE):
+    if os.path.exists(OLD_MODEL_FILE):
         print("Loading previous network...")
-        net.load_state_dict(torch.load(MODEL_FILE, map_location=device))
+        net.load_state_dict(torch.load(OLD_MODEL_FILE, map_location=device))
 
     optimizer = torch.optim.Adam(
         net.parameters(),
@@ -123,9 +127,10 @@ def main():
 
     torch.save(
         net.state_dict(),
-        MODEL_FILE
+        CURR_MODEL_FILE
     )
-
+    print("Exporting to ONNX...")
+    convert_to_cpp.convert_to_cpp()
     print("Done!")
 
 

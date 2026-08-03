@@ -8,19 +8,23 @@ import os
 import time
 import numpy as np
 import torch
+from pathlib import Path
 
 from network import ChessNet
+from find_version import find_current_version
 from self_play import play_one_game
 
 NUM_GAMES = 350
 NUM_SIMULATIONS = 100   # AlphaZero-scale runs use 400-800; kept low here for a quick test
 MAX_MOVES = 200
 
-if __name__ == "__main__":
+def main():
     torch.manual_seed(0)
     net = ChessNet()
+    ROOT = Path(__file__).resolve().parent.parent
+    curr_version = find_current_version()
+    MODEL_FILE = ROOT / "data" / f"version{curr_version}" / "network.pt"
 
-    MODEL_FILE = "network.pt"
     if os.path.exists(MODEL_FILE):
         print("Loading previous network...")
         net.load_state_dict(torch.load(MODEL_FILE, map_location="cpu"))
@@ -57,7 +61,7 @@ if __name__ == "__main__":
     all_outcomes = np.array(all_outcomes, dtype=np.float32)
 
     np.savez_compressed(
-        "self_play_data.npz",
+        ROOT / "data" / f"version{curr_version+1}" / "self_play_data.npz",
         boards=all_boards,
         policies=all_policies,
         outcomes=all_outcomes,
@@ -75,3 +79,9 @@ if __name__ == "__main__":
     print(f"  boards shape: {all_boards.shape}")
     print(f"  policies shape: {all_policies.shape}")
     print(f"  outcomes shape: {all_outcomes.shape}")
+
+
+
+
+if __name__ == "__main__":
+    main()
