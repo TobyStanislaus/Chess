@@ -1,13 +1,14 @@
 import torch
 from pathlib import Path
 from network import ChessNet
-
+from find_version import find_current_version
 
 def convert_to_cpp():
     ROOT = Path(__file__).resolve().parent.parent
+    version = find_current_version()
 
     model = ChessNet()
-    model.load_state_dict(torch.load(ROOT / "data" / "network.pt", map_location="cpu"))
+    model.load_state_dict(torch.load(ROOT / "data" / f"version{str(version)}" / "network.pt", map_location="cpu"))
     model.eval()
 
     dummy_input = torch.randn(1, 17, 8, 8)
@@ -15,7 +16,7 @@ def convert_to_cpp():
     torch.onnx.export(
         model,
         dummy_input,
-        str(ROOT / "build" / "network.onnx"),
+        str(ROOT / "build" / f"network_{version}.onnx"),
         input_names=["board_input"],
         output_names=["policy", "value"],
         dynamic_axes={
@@ -24,4 +25,5 @@ def convert_to_cpp():
             "value": {0: "batch_size"},
         },
         opset_version=17,
+        dynamo=False,
     )

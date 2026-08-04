@@ -84,5 +84,5 @@ private:
 
     Move pendingMove;
     std::vector<Move> moveHistory;
-    NNEvaluator nnEvaluator{"network.onnx"};
+    NNEvaluator nnEvaluator{"assets/network_1.onnx"};
 };

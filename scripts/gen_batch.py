@@ -14,8 +14,8 @@ from network import ChessNet
 from find_version import find_current_version
 from self_play import play_one_game
 
-NUM_GAMES = 350
-NUM_SIMULATIONS = 100   # AlphaZero-scale runs use 400-800; kept low here for a quick test
+NUM_GAMES = 1000
+NUM_SIMULATIONS = 150   # AlphaZero-scale runs use 400-800; kept low here for a quick test
 MAX_MOVES = 200
 
 def main():
