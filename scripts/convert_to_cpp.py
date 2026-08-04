@@ -16,7 +16,7 @@ def convert_to_cpp():
     torch.onnx.export(
         model,
         dummy_input,
-        str(ROOT / "build" / f"network_{version}.onnx"),
+        str(ROOT / "assets" / "network.onnx"),
         input_names=["board_input"],
         output_names=["policy", "value"],
         dynamic_axes={
