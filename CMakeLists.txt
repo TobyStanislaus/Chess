@@ -5,7 +5,6 @@ project(Chess)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_PREFIX_PATH "C:/vcpkg/installed/x64-windows")
 find_package(SFML COMPONENTS Graphics Window System REQUIRED)
 
 add_executable(Chess
@@ -30,8 +29,6 @@ target_include_directories(Chess PRIVATE
     C:/libs/onnxruntime-win-x64-1.28.0/include
 )
 
-
-
 target_link_libraries(Chess PRIVATE
     SFML::Graphics
     SFML::Window
@@ -46,22 +43,29 @@ target_link_libraries(Chess PRIVATE
     onnxruntime
 )
 
+# Copy game assets next to the built executable
 add_custom_command(TARGET Chess POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/assets
     $<TARGET_FILE_DIR:Chess>/assets
 )
 
+# onnxruntime isn't managed by vcpkg, so it's not covered by
+# VCPKG_APPLOCAL_DEPS auto-copying — copy its DLLs manually.
 add_custom_command(TARGET Chess POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "$<IF:$<CONFIG:Debug>,C:/vcpkg/installed/x64-windows/debug/bin/sfml-graphics-d-3.dll,C:/vcpkg/installed/x64-windows/bin/sfml-graphics-3.dll>"
+    C:/libs/onnxruntime-win-x64-1.28.0/lib/onnxruntime.dll
     $<TARGET_FILE_DIR:Chess>
 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "$<IF:$<CONFIG:Debug>,C:/vcpkg/installed/x64-windows/debug/bin/sfml-window-d-3.dll,C:/vcpkg/installed/x64-windows/bin/sfml-window-3.dll>"
-    $<TARGET_FILE_DIR:Chess>
-
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "$<IF:$<CONFIG:Debug>,C:/vcpkg/installed/x64-windows/debug/bin/sfml-system-d-3.dll,C:/vcpkg/installed/x64-windows/bin/sfml-system-3.dll>"
+    C:/libs/onnxruntime-win-x64-1.28.0/lib/onnxruntime_providers_shared.dll
     $<TARGET_FILE_DIR:Chess>
 )
+
+# NOTE: SFML and its transitive dependencies (freetype, libpng, zlib,
+# brotli, bz2, etc.) are copied automatically next to Chess.exe by
+# vcpkg's applocal deps feature (VCPKG_APPLOCAL_DEPS, on by default)
+# — but only if you configure with the vcpkg toolchain file, e.g.:
+#
+#   cmake -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release ^
+#         -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake

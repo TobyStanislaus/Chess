@@ -1,0 +1,13 @@
+# ninja log v7
+85	3605	8075718943859132	CMakeFiles/Chess.dir/src/pieces/Queen.cpp.obj	2dab528a3e31d76e
+45	3619	8075718943472333	CMakeFiles/Chess.dir/src/pieces/Bishop.cpp.obj	c91e5bb3376c8524
+78	3629	8075718943813953	CMakeFiles/Chess.dir/src/pieces/Piece.cpp.obj	a49a769f0546dcd6
+57	3709	8075718943594561	CMakeFiles/Chess.dir/src/pieces/King.cpp.obj	609df72da2c24a97
+70	3804	8075718943741924	CMakeFiles/Chess.dir/src/pieces/Pawn.cpp.obj	9d77d7d5ce3e42d6
+63	3848	8075718943656620	CMakeFiles/Chess.dir/src/pieces/Knight.cpp.obj	94b69fb33bfe8021
+93	3941	8075718943957723	CMakeFiles/Chess.dir/src/pieces/Rook.cpp.obj	cb34f4e44a5602c0
+28	4403	8075718943314221	CMakeFiles/Chess.dir/src/Game.cpp.obj	e207572f71ff266c
+5	4430	8075718943077594	CMakeFiles/Chess.dir/src/main.cpp.obj	e94b8c28a036d884
+38	4797	8075718943401958	CMakeFiles/Chess.dir/src/NNEvaluator.cpp.obj	871b1d8c7d3cc41f
+17	5262	8075718943205994	CMakeFiles/Chess.dir/src/Board.cpp.obj	3696179f985f448
+5262	5730	8075718995653346	Chess.exe	b30fe53a27353b0a
