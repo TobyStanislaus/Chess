@@ -6,9 +6,34 @@
 #include <codecvt>
 
 // convert narrow string -> wide string for Windows ONNX Runtime API
-std::wstring toWideString(const std::string& s) {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    return converter.from_bytes(s);
+#include <windows.h>
+
+std::wstring toWideString(const std::string& s)
+{
+    if (s.empty())
+        return {};
+
+    int size_needed = MultiByteToWideChar(
+        CP_UTF8,
+        0,
+        s.data(),
+        static_cast<int>(s.size()),
+        nullptr,
+        0
+    );
+
+    std::wstring result(size_needed, 0);
+
+    MultiByteToWideChar(
+        CP_UTF8,
+        0,
+        s.data(),
+        static_cast<int>(s.size()),
+        result.data(),
+        size_needed
+    );
+
+    return result;
 }
 
 NNEvaluator::NNEvaluator(const std::string& modelPath)

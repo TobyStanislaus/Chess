@@ -17,7 +17,7 @@ public:
     void handleMCTSBotTurn();
     void handleHumanTurn(Square clicked);
     Square handle_click(sf::RenderWindow& window);
-    bool handleInput(sf::RenderWindow& window, Square clicked, sf::Clock& clock);
+    bool handleInput(Square clicked, sf::Clock& clock);
     void draw(sf::RenderWindow& window);
 
     

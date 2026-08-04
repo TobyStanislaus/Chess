@@ -71,6 +71,6 @@ Testing/
 __pycache__/
 *.pyc
 
-# ML model checkpoints and generated training data
+build/
 
-# Editor-specific settings
+.vscode/

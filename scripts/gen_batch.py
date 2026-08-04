@@ -14,7 +14,7 @@ from network import ChessNet
 from find_version import find_current_version
 from self_play import play_one_game
 
-NUM_GAMES = 1000
+NUM_GAMES = 1250
 NUM_SIMULATIONS = 150   # AlphaZero-scale runs use 400-800; kept low here for a quick test
 MAX_MOVES = 200
 
@@ -60,8 +60,11 @@ def main():
     all_policies = np.array(all_policies, dtype=np.float32)
     all_outcomes = np.array(all_outcomes, dtype=np.float32)
 
+    save_dir = ROOT / "data" / f"version{curr_version+1}"
+    save_dir.mkdir(parents=True, exist_ok=True)
+
     np.savez_compressed(
-        ROOT / "data" / f"version{curr_version+1}" / "self_play_data.npz",
+        save_dir / "self_play_data.npz",
         boards=all_boards,
         policies=all_policies,
         outcomes=all_outcomes,

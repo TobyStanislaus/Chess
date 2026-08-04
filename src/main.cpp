@@ -21,7 +21,7 @@ int main()
 
         if (!game.board.getGameOver())
         {
-            game.handleInput(window, clicked, clock);
+            game.handleInput(clicked, clock);
         }
 
         window.clear(sf::Color::Black);

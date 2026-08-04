@@ -350,7 +350,7 @@ std::vector<Move> Board::getPawnMoves(Piece& piece, bool careAboutCheck)
     for (Square newPos : piece.getDirections())
     {
         Piece* forwardPiece = getPieceAt(newPos);
-        Move newMove = {piece.getPosition(), newPos};
+        newMove = {piece.getPosition(), newPos};
         detectIfPromotion(piece, newMove);
         if (!inBounds(newPos)){continue;}
         if (forwardPiece == nullptr)
@@ -413,7 +413,7 @@ Move Board::makeRandomMove(bool black){
 
     if (moves.empty()) return {{-1,-1}, {-1,-1}};
 
-    std::uniform_int_distribution<int> randI(0, moves.size()-1);
+    std::uniform_int_distribution<size_t> randI(size_t(0), size_t(moves.size()-1));
     Move chosenMove = moves[randI(gen)];
     if (chosenMove.isPromotion) chosenMove.promotionPiece = PieceType::Queen;
     

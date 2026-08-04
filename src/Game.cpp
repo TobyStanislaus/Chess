@@ -125,7 +125,7 @@ void Game::handleHumanTurn(Square clicked)
 }
 
 
-bool Game::handleInput(sf::RenderWindow& window, Square clicked, sf::Clock& clock){  
+bool Game::handleInput(Square clicked, sf::Clock& clock){  
     
     if (clicked.col == -50 && board.getMoveHistory().size()>0 && !board.isWaitingToPromote()){
         clock.restart();
