@@ -71,6 +71,7 @@ Testing/
 __pycache__/
 *.pyc
 
-build/
+build-debug/
+build-release/
 
 .vscode/
