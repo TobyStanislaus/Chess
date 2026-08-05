@@ -3,7 +3,8 @@
 
 
 
-void display_board(sf::RenderWindow& window){
+void Game::display_board(sf::RenderWindow& window){
+    //Chess Board
     for (int row = 0; row < 8; row++)
     {
         for (int col = 0; col < 8; col++)
@@ -126,7 +127,7 @@ void Game::handleHumanTurn(Square clicked)
 
 
 bool Game::handleInput(Square clicked, sf::Clock& clock){  
-    
+    determineIfBotChangeRequired(clicked);
     if (clicked.col == -50 && board.getMoveHistory().size()>0 && !board.isWaitingToPromote()){
         clock.restart();
         blackTurn = !blackTurn;
@@ -141,16 +142,14 @@ bool Game::handleInput(Square clicked, sf::Clock& clock){
     {
         handleHumanTurn(clicked);
     } else if (!board.isWaitingToPromote() && clock.getElapsedTime().asMilliseconds()>=500){
+        clock.restart();
         if (currentPlayer == PlayerType::RandomBot)
         {
-            clock.restart();
             handleRandomBotTurn();
         }else if (currentPlayer == PlayerType::MinimaxBot)
         {
-            clock.restart();
             handleMinimaxBotTurn();
         }else if (currentPlayer == PlayerType::MCTS){
-            clock.restart();
             handleMCTSBotTurn();
         }
 
@@ -164,4 +163,13 @@ bool Game::handleInput(Square clicked, sf::Clock& clock){
 void Game::draw(sf::RenderWindow& window){
     display_board(window);
     board.draw(window, blackTurn);
+}
+
+void Game::determineIfBotChangeRequired(Square clicked){
+    PlayerType* playerToChange = blackTurn ? &blackPlayer : &whitePlayer;
+    if (clicked.col<=7){return;}
+    if (clicked.row == 7){*playerToChange = PlayerType::RandomBot;}
+    if (clicked.row == 6){*playerToChange = PlayerType::MCTS;}
+    if (clicked.row == 5){*playerToChange = PlayerType::MinimaxBot;}
+    if (clicked.row == 4){*playerToChange = PlayerType::Human;}
 }

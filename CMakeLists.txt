@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.25)
 
 project(Chess)
 
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(SFML COMPONENTS Graphics Window System REQUIRED)
 
-add_executable(Chess
+add_executable(Chess WIN32
     src/main.cpp
     src/Board.cpp
     src/Game.cpp
@@ -21,6 +23,7 @@ add_executable(Chess
     src/pieces/Queen.cpp
     src/pieces/Rook.cpp
 )
+target_link_options(Chess PRIVATE "/ENTRY:mainCRTStartup")
 
 target_include_directories(Chess PRIVATE
     src

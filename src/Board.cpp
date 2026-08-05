@@ -68,6 +68,24 @@ Board::Board()
 
 
 void Board::draw(sf::RenderWindow& window, bool blackTurn){
+    // Side Panel
+    sf::RectangleShape turnSquare({200.f, 200.f});
+    turnSquare.setPosition({800.f, 000.f});
+    sf::Color color = blackTurn ? sf::Color::Black : sf::Color::White;
+    turnSquare.setFillColor(color);
+    window.draw(turnSquare);
+
+    sf::Text turnText(font, blackTurn ? "Black's Turn" : "White's Turn", 30);
+    turnText.setFillColor(sf::Color::Black);
+    turnText.setPosition({820.f, 85.f});
+    turnText.setFillColor(blackTurn ? sf::Color::White : sf::Color::Black);
+    window.draw(turnText);
+
+    sf::RectangleShape sidePanel({200.f, 600.f});
+    sidePanel.setPosition({800.f, 200.f});
+    sidePanel.setFillColor(sf::Color::White);
+    window.draw(sidePanel);
+
     for (auto&piece : pieces){
         piece->draw(window);
     }

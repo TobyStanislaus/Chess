@@ -7,7 +7,7 @@
 int main()
 {
     sf::RenderWindow window(
-        sf::VideoMode({800, 800}),
+        sf::VideoMode({1000, 800}),
         "Chess"
     );
 

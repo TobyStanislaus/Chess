@@ -12,6 +12,7 @@ private:
     PlayerType blackPlayer = PlayerType::MinimaxBot;
 public:
     Board board;
+    void display_board(sf::RenderWindow& window);
     void handleRandomBotTurn();
     void handleMinimaxBotTurn();
     void handleMCTSBotTurn();
@@ -19,6 +20,6 @@ public:
     Square handle_click(sf::RenderWindow& window);
     bool handleInput(Square clicked, sf::Clock& clock);
     void draw(sf::RenderWindow& window);
-
+    void determineIfBotChangeRequired(Square clicked);
     
 };
