@@ -5,11 +5,12 @@ enum class PlayerType { Human, RandomBot, MinimaxBot, MCTS };
 class Game
 {
 private:
+    bool paused = false;
     bool blackTurn = false;
     Piece* selectedPiece = nullptr;
 
     PlayerType whitePlayer = PlayerType::Human;
-    PlayerType blackPlayer = PlayerType::MinimaxBot;
+    PlayerType blackPlayer = PlayerType::MCTS;
 public:
     Board board;
     void display_board(sf::RenderWindow& window);
@@ -20,6 +21,7 @@ public:
     Square handle_click(sf::RenderWindow& window);
     bool handleInput(Square clicked, sf::Clock& clock);
     void draw(sf::RenderWindow& window);
-    void determineIfBotChangeRequired(Square clicked);
+    void useButton(Square clicked);
+    float getPlayerTypeY(PlayerType player);
     
 };

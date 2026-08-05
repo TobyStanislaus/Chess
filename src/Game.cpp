@@ -1,8 +1,6 @@
 #include "Game.hpp"
 
 
-
-
 void Game::display_board(sf::RenderWindow& window){
     //Chess Board
     for (int row = 0; row < 8; row++)
@@ -24,6 +22,17 @@ void Game::display_board(sf::RenderWindow& window){
             window.draw(square);
         }
     }
+
+
+    sf::RectangleShape sidePanel({200.f, 600.f});
+    sidePanel.setPosition({800.f, 200.f});
+    sidePanel.setFillColor(sf::Color(220, 220, 220));
+    window.draw(sidePanel);
+
+    sf::RectangleShape playerTypeBox({200.f, 100.f});
+    playerTypeBox.setPosition({800.f, getPlayerTypeY(blackTurn ? blackPlayer : whitePlayer)});
+    playerTypeBox.setFillColor(sf::Color(100, 200, 100));
+    window.draw(playerTypeBox);
 }
 
 
@@ -71,7 +80,7 @@ void Game::handleRandomBotTurn()
 
 
 void Game::handleMinimaxBotTurn(){
-    Move move = board.findBestMove(blackTurn, 2); 
+    Move move = board.findBestMove(blackTurn, 3); 
     if (move.from.col != -1){
         board.makeMove(move, blackTurn);
         blackTurn = !blackTurn;
@@ -127,7 +136,8 @@ void Game::handleHumanTurn(Square clicked)
 
 
 bool Game::handleInput(Square clicked, sf::Clock& clock){  
-    determineIfBotChangeRequired(clicked);
+    useButton(clicked);
+
     if (clicked.col == -50 && board.getMoveHistory().size()>0 && !board.isWaitingToPromote()){
         clock.restart();
         blackTurn = !blackTurn;
@@ -135,12 +145,15 @@ bool Game::handleInput(Square clicked, sf::Clock& clock){
         return !board.getGameOver();
     }
 
+    if (paused) {return true;}
+
     PlayerType currentPlayer = blackTurn ? blackPlayer : whitePlayer;
 
 
     if (currentPlayer == PlayerType::Human)
     {
         handleHumanTurn(clicked);
+        clock.restart();
     } else if (!board.isWaitingToPromote() && clock.getElapsedTime().asMilliseconds()>=500){
         clock.restart();
         if (currentPlayer == PlayerType::RandomBot)
@@ -162,14 +175,30 @@ bool Game::handleInput(Square clicked, sf::Clock& clock){
 
 void Game::draw(sf::RenderWindow& window){
     display_board(window);
-    board.draw(window, blackTurn);
+    board.draw(window, blackTurn, paused);
 }
 
-void Game::determineIfBotChangeRequired(Square clicked){
+void Game::useButton(Square clicked){
     PlayerType* playerToChange = blackTurn ? &blackPlayer : &whitePlayer;
     if (clicked.col<=7){return;}
     if (clicked.row == 7){*playerToChange = PlayerType::RandomBot;}
     if (clicked.row == 6){*playerToChange = PlayerType::MCTS;}
     if (clicked.row == 5){*playerToChange = PlayerType::MinimaxBot;}
     if (clicked.row == 4){*playerToChange = PlayerType::Human;}
+    if (clicked.row == 2){
+        paused = !paused;
+    }
+}
+
+float Game::getPlayerTypeY(PlayerType player)
+{
+    switch (player)
+    {
+        case PlayerType::RandomBot: return 700.f;
+        case PlayerType::MCTS: return 600.f;
+        case PlayerType::MinimaxBot: return 500.f;
+        case PlayerType::Human: return 400.f;
+    }
+
+    return 700.f; // fallback
 }

@@ -9,8 +9,8 @@ class Board
 {
 public:
     Board();
-
-    void draw(sf::RenderWindow& window, bool blackTurn);
+    
+    void draw(sf::RenderWindow& window, bool blackTurn, bool paused);
     std::vector<std::unique_ptr<Piece>>& getPieces();
     void set_potential_moves(const std::vector<Move>& new_moves);
 
@@ -70,6 +70,7 @@ public:
     int minimax(int depth, bool blackTurn, int alpha, int beta);
     Move findBestMove(bool blackTurn, int depth);
     Move findBestMoveMCTS(bool blackTurn, int numSimulations=200);
+    int moveScore(Move& move, bool blackTurn);
 private:
     sf::Texture texture;
     std::vector<std::unique_ptr<Piece>> pieces;

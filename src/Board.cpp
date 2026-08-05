@@ -67,7 +67,7 @@ Board::Board()
 }
 
 
-void Board::draw(sf::RenderWindow& window, bool blackTurn){
+void Board::draw(sf::RenderWindow& window, bool blackTurn, bool paused){
     // Side Panel
     sf::RectangleShape turnSquare({200.f, 200.f});
     turnSquare.setPosition({800.f, 000.f});
@@ -76,15 +76,31 @@ void Board::draw(sf::RenderWindow& window, bool blackTurn){
     window.draw(turnSquare);
 
     sf::Text turnText(font, blackTurn ? "Black's Turn" : "White's Turn", 30);
-    turnText.setFillColor(sf::Color::Black);
-    turnText.setPosition({820.f, 85.f});
+    turnText.setPosition({815.f, 85.f});
     turnText.setFillColor(blackTurn ? sf::Color::White : sf::Color::Black);
     window.draw(turnText);
 
-    sf::RectangleShape sidePanel({200.f, 600.f});
-    sidePanel.setPosition({800.f, 200.f});
-    sidePanel.setFillColor(sf::Color::White);
-    window.draw(sidePanel);
+    sf::Text pauseText(font, paused ? "Paused" : "Playing", 30);
+    pauseText.setPosition({840.f, 230.f});
+    pauseText.setFillColor(sf::Color::Black);
+    window.draw(pauseText);
+
+
+   std::vector<std::string> botNames = {
+    "Random Bot",
+    "MCTS",
+    "Minimax Bot",
+    "Human",
+    "Move played by:"
+    };
+
+    for (int i = 0; i < botNames.size(); i++)
+    {
+        sf::Text botText(font, botNames[i], 20);
+        botText.setPosition({820.f, 720.f - i * 100.f});
+        botText.setFillColor(sf::Color::Black);
+        window.draw(botText);
+    }
 
     for (auto&piece : pieces){
         piece->draw(window);
@@ -835,6 +851,13 @@ int Board::minimax(int depth, bool blackTurn, int alpha, int beta){
         return evaluate();
     }
 
+    std::sort(moves.begin(), moves.end(),
+        [&](Move& a, Move& b)
+        {
+            return moveScore(a, blackTurn) > moveScore(b, blackTurn);
+        }
+    );
+
     if (blackTurn){ 
         int best = INT32_MAX;
         for (Move& m : moves){
@@ -888,4 +911,14 @@ Move Board::findBestMoveMCTS(bool blackTurn, int numSimulations) {
     MCTSNode root = runMCTS(*this, blackTurn, nnEvaluator, numSimulations, false);
     if (root.children.empty()) return {{-1,-1}, {-1,-1}};
     return selectMove(root, 0.0f);
+}
+
+int Board::moveScore(Move& move, bool blackTurn)
+{
+    int score = 0;
+
+    if (move.capturedPiece)
+        score += 100 * pieceValue(move.capturedPiece->getType());
+
+    return score;
 }
