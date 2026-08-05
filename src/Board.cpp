@@ -102,6 +102,28 @@ void Board::draw(sf::RenderWindow& window, bool blackTurn, bool paused){
         window.draw(botText);
     }
 
+
+    if (checkIfImInCheck(blackTurn, Square{-1,-1})){
+        sf::RectangleShape pawnShape({100.f, 100.f});
+        pawnShape.setOrigin({50.f, 50.f});
+
+        Square kingPos = {-1,-1};
+        for (auto& piece : pieces){
+            if (piece->getType() == PieceType::King && piece->getBlack() == blackTurn){
+                kingPos = piece->getPosition();
+                break;
+            }
+        }
+
+        pawnShape.setPosition({
+            kingPos.col * 100.f + 50.f,
+            kingPos.row * 100.f + 50.f
+        });
+
+        pawnShape.setFillColor(sf::Color::Red);
+        window.draw(pawnShape);
+    }
+
     for (auto&piece : pieces){
         piece->draw(window);
     }
@@ -118,8 +140,9 @@ void Board::draw(sf::RenderWindow& window, bool blackTurn, bool paused){
 
         pawnShape.setFillColor(sf::Color::Blue);
         window.draw(pawnShape);
-    }
-    
+    };
+
+
     if (gameOver)
     {
         // Dark translucent background
