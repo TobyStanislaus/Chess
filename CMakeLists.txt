@@ -10,6 +10,8 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 
 find_package(SFML COMPONENTS Graphics Window System REQUIRED)
 
+
+
 add_executable(Chess WIN32
     src/main.cpp
     src/Board.cpp
@@ -23,6 +25,9 @@ add_executable(Chess WIN32
     src/pieces/Piece.cpp
     src/pieces/Queen.cpp
     src/pieces/Rook.cpp
+
+    ${SOURCES}
+    chess.rc
 )
 target_link_options(Chess PRIVATE "/ENTRY:mainCRTStartup")
 

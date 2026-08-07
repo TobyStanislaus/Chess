@@ -11,6 +11,7 @@
 #define BuildDir "C:\Users\toby\OneDrive\Documents\Github\Chess\build-release"
 
 [Setup]
+SetupIconFile=chess_icon.ico
 AppId={{A5B9C1F0-3E2D-4B7A-9F1C-8D2E4A6B7C90}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
