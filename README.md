@@ -81,4 +81,4 @@ Player types include human, random, Minimax and MCTS players. The MCTS player us
 
 ## Releases
 
-Pre-built Windows releases are available through [GitHub Releases].
+Pre-built Windows releases are available through [GitHub Releases](https://github.com/TobyStanislaus/Chess/releases/tag/v1.1).
