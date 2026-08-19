@@ -3,6 +3,19 @@
 A C++ chess engine combining classical search algorithms with an
 AlphaZero-style neural network.
 
+
+
+## Installation
+
+### Windows
+
+Download the latest Windows installer from
+[GitHub Releases](https://github.com/TobyStanislaus/Chess/releases/tag/v1.1).
+
+The installer contains the application and required runtime
+dependencies; no development environment is required.
+
+
 ## Features
 - Interactive chess application built with C++ and SFML
 - Human vs Human and Human vs AI gameplay
@@ -77,8 +90,24 @@ Player types include human, random, Minimax and MCTS players. The MCTS player us
 
 ## Building
 
+### Requirements
 
+- Windows x64
+- CMake 3.25+
+- Ninja
+- Visual Studio / MSVC
+- vcpkg
+- SFML
+- ONNX Runtime
 
-## Releases
+### Build
 
-Pre-built Windows releases are available through [GitHub Releases](https://github.com/TobyStanislaus/Chess/releases/tag/v1.1).
+The project uses CMake presets and vcpkg for dependency management.
+
+Configure and build a Release version with:
+
+```bash
+cmake --preset release
+cmake --build --preset release
+```
+
