@@ -102,7 +102,7 @@ Player types include human, random, Minimax and MCTS players. The MCTS player us
 
 1. Install Visual Studio 2026 with the **Desktop development with C++** workload.
 
-2. Install [vcpkg](https://github.com/microsoft/vcpkg) and set the `VCPKG_ROOT` environment variable to your vcpkg installation directory.
+2. Install [vcpkg]([https://github.com/microsoft/vcpkg](https://learn.microsoft.com/en-gb/vcpkg/get_started/get-started-vscode?pivots=shell-powershell)) and set the `VCPKG_ROOT` environment variable to your vcpkg installation directory.
 
 3. Download the **Windows x64 CPU** release of [ONNX Runtime](https://github.com/microsoft/onnxruntime/releases).
 
