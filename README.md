@@ -93,21 +93,33 @@ Player types include human, random, Minimax and MCTS players. The MCTS player us
 ### Requirements
 
 - Windows x64
+- Visual Studio 2026 with **Desktop development with C++**
 - CMake 3.25+
-- Ninja
-- Visual Studio / MSVC
 - vcpkg
-- SFML
-- ONNX Runtime
+- ONNX Runtime (Windows x64)
 
-### Build
+### Setup
 
-The project uses CMake presets and vcpkg for dependency management.
+1. Install Visual Studio 2026 with the **Desktop development with C++** workload.
 
-Configure and build a Release version with:
+2. Install [vcpkg](https://github.com/microsoft/vcpkg) and set the `VCPKG_ROOT` environment variable to your vcpkg installation directory.
 
-```bash
+3. Download the **Windows x64 CPU** release of [ONNX Runtime](https://github.com/microsoft/onnxruntime/releases).
+
+4. Extract ONNX Runtime into the project at:
+
+```text
+third_party/onnxruntime/
+```
+
+5. Clone the repository:
+```text
+git clone https://github.com/TobyStanislaus/Chess.git
+cd Chess
+```
+6. Configure + Build the Project:
+```text
 cmake --preset release
 cmake --build --preset release
 ```
-
+The executable will be created in build-release/Debug
