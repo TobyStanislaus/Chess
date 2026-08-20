@@ -76,3 +76,4 @@ build-release/
 
 .vscode/
 *.exe
+third_party/onnxruntime/

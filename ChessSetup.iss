@@ -8,7 +8,7 @@
 #define MyAppExeName "Chess.exe"
 
 ; Adjust this to wherever the release build lives on your machine
-#define BuildDir "C:\Users\toby\OneDrive\Documents\Github\Chess\build-release"
+#define BuildDir "C:\Users\toby\OneDrive\Documents\Github\Chess\build-release\Debug"
 
 [Setup]
 SetupIconFile=chess_icon.ico
