@@ -106,17 +106,19 @@ Player types include human, random, Minimax and MCTS players. The MCTS player us
 
 3. Download the **Windows x64 CPU** release of [ONNX Runtime](https://github.com/microsoft/onnxruntime/releases).
 
-4. Extract ONNX Runtime into the project at:
+4. Clone the repository:
+```text
+git clone https://github.com/TobyStanislaus/Chess.git
+cd Chess
+```
+
+5. Extract ONNX Runtime into the project at:
 
 ```text
 third_party/onnxruntime/
 ```
 
-5. Clone the repository:
-```text
-git clone https://github.com/TobyStanislaus/Chess.git
-cd Chess
-```
+
 6. Configure + Build the Project:
 ```text
 cmake --preset release
