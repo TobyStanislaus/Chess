@@ -10,7 +10,7 @@ AlphaZero-style neural network.
 ### Windows
 
 Download the latest Windows installer from
-[GitHub Releases](https://github.com/TobyStanislaus/Chess/releases/tag/v1.1).
+[GitHub Releases](https://github.com/TobyStanislaus/Chess/releases/tag/v1.2).
 
 The installer contains the application and required runtime
 dependencies; no development environment is required.
