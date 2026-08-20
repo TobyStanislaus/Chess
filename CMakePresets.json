@@ -10,10 +10,13 @@
       "name": "base",
       "hidden": true,
       "generator": "Ninja",
-      "toolchainFile": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-windows",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
+        "ONNXRUNTIME_DIR": "$env{ONNXRUNTIME_DIR}"
       },
       "architecture": {
         "value": "x64",
